@@ -29,6 +29,7 @@ GRAPHICS :=	gfx
 RESOURCES := resources
 GFXBUILD :=	$(ROMFS)/gfx
 BUILDTOOLS := $(TOPDIR)/buildtools
+TOOLCHAIN := arm-none-eabi
 
 #---------------------------------------------------------------------------------
 # Resource Setup
@@ -45,15 +46,16 @@ RSF := $(TOPDIR)/$(RESOURCES)/template.rsf
 ARCH := -march=armv6k -mtune=mpcore -mfloat-abi=hard
 
 COMMON_FLAGS := -g -Wall -Wno-strict-aliasing -O2 -mword-relocations -fomit-frame-pointer \
-	-ffast-math $(ARCH) $(INCLUDE) -D__3DS__ $(BUILD_FLAGS)
-CFLAGS := $(COMMON_FLAGS) -std=gnu99
+	-ffunction-sections -fdata-sections \
+	$(ARCH) $(INCLUDE) -D__3DS__ $(BUILD_FLAGS) 
+CFLAGS := $(COMMON_FLAGS) -std=gnu11
 CXXFLAGS := $(COMMON_FLAGS) -std=gnu++11
 ifeq ($(ENABLE_EXCEPTIONS),)
 	CXXFLAGS += -fno-rtti -fno-exceptions
 endif
 
 ASFLAGS := -g $(ARCH)
-LDFLAGS = -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map)
+LDFLAGS = -specs=3dsx.specs -g $(ARCH) -Wl,-Map,$(notdir $*.map) 
 
 LIBS := -lcitro2d -lcitro3d -lctru -lm -lz
 LIBDIRS := $(PORTLIBS) $(CTRULIB) ./lib
@@ -141,6 +143,9 @@ $(OUTPUT_DIR):
 clean:
 	@echo clean ...
 	@rm -fr $(BUILD) $(OUTPUT)
+
+clean_gfx:
+	@echo clean gfx ...
 	@rm -fr $(TOPDIR)/$(GFXBUILD)
 
 #---------------------------------------------------------------------------------
@@ -199,6 +204,11 @@ else
 	BANNERTOOL = $(BUILDTOOLS)/bannertool
 endif
 
+SILENT	:= $(if $(VERBOSE)$(V),,@)
+
+OBJDUMP	:= $(TOOLCHAIN)-objdump
+DUMPFILE := $(OUTPUT_DIR)/$(OUTPUT_NAME).dump
+
 _3DSXFLAGS += --smdh=$(OUTPUT_FILE).smdh
 ifneq ("$(wildcard $(TOPDIR)/$(ROMFS))","")
 	_3DSXFLAGS += --romfs=$(TOPDIR)/$(ROMFS)
@@ -219,6 +229,10 @@ icon.icn: $(TOPDIR)/$(ICON)
 $(OUTPUT_FILE).elf: $(OFILES) $(T3XFILES)
 
 $(OUTPUT_FILE).3dsx: $(OUTPUT_FILE).elf $(OUTPUT_FILE).smdh
+	@echo "dump  ... $(notdir $<)"
+	$(SILENT)$(OBJDUMP) -h -C -S $< > $(DUMPFILE)
+	@echo "built ... $(notdir $@)"
+	$(SILENT)3dsxtool $< $@ --smdh=$(OUTPUT_FILE).smdh
 
 $(OUTPUT_FILE).3ds: $(OUTPUT_FILE).elf banner.bnr icon.icn
 	@$(MAKEROM) -f cci -o $(OUTPUT_FILE).3ds -DAPP_ENCRYPTED=true $(COMMON_MAKEROM_PARAMS)
