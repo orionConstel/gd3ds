@@ -337,7 +337,7 @@ void draw_objects() {
 			col.color.g = 255;
 			col.color.b = 255;
 			col.blending = false;
-		} else {
+		}else {
 			col = channels[col_channel];
 		}
 		
