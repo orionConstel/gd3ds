@@ -1,10 +1,12 @@
 #include <3ds.h>
 #include <citro2d.h>
 #include "menus/components/ui_element.h"
-#include "menus/components/ui_loader.h"
+#include "menus/components/ui_screen.h"
 #include "math_helpers.h"
 
-void action_hi(void* data) { printf("Hi\n"); };
+volatile bool start_level = false;
+
+void action_hi(void* data) { start_level = true; };
 
 UIAction actions[] = {
     {"hibykrmal", action_hi}
@@ -12,7 +14,6 @@ UIAction actions[] = {
 
 void level_select_loop() {
 	UIScreen screen;
-    consoleInit(GFX_TOP, NULL);
 	C3D_RenderTarget* top = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 	C3D_RenderTargetClear(top, C3D_CLEAR_ALL, 0, 0);
 
@@ -21,6 +22,8 @@ void level_select_loop() {
 	while (aptMainLoop()) {
 		hidScanInput();
         
+		if (start_level) break;
+
 		touchPosition touch;
 		hidTouchRead(&touch);
 		ui_screen_update(&screen, &touch);

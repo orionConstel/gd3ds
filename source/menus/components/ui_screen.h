@@ -8,5 +8,12 @@ typedef struct {
     int count;
 } UIScreen;
 
+typedef struct {
+    const char* name;
+    UIActionFn fn;
+} UIAction;
+
+void ui_load_screen(UIScreen* screen, const UIAction* actions, size_t count, const char* path);
+
 void ui_screen_update(UIScreen* screen, touchPosition* touch);
 void ui_screen_draw(UIScreen* screen);

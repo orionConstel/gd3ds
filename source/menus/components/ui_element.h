@@ -23,6 +23,8 @@ typedef struct {
     bool hovered;
     bool pressed;
     float hoverScale;
+
+    char text[64];
 } UIButtonData;
 
 typedef struct UIElement UIElement;

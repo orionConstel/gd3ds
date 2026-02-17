@@ -54,7 +54,8 @@ static void ui_button_draw(UIElement* e) {
 UIElement ui_create_button(
     int x, int y, int sprite_index, 
     UIActionFn action,
-    void* action_data
+    void* action_data,
+    char* text
 ) {
     UIElement e = {
         .type = UI_BUTTON,
@@ -67,6 +68,9 @@ UIElement ui_create_button(
         .update = ui_button_update,
         .draw = ui_button_draw
     };
+
+    // Copy text
+    strncpy(e.button.text, text, 63);
 
     C2D_SpriteFromSheet(&e.button.image.sprite, ui_sheet, sprite_index);
 

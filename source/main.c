@@ -22,6 +22,8 @@
 float cam_x = 0;
 float cam_y = 0;
 
+PrintConsole console;
+
 bool is_citra() {
 	s64 version = 0;
 	svcGetSystemInfo(&version, CITRA_TYPE, CITRA_VERSION);
@@ -73,9 +75,12 @@ int main(int argc, char* argv[]) {
 	C2D_Prepare();
 	osSetSpeedupEnable(1);
 
+    consoleInit(GFX_TOP, NULL);
 	ui_assets_init();
 	
 	level_select_loop();
+	
+	gfxInitDefault();
 	consoleInit(GFX_BOTTOM, NULL);
 
 	// Create screens
