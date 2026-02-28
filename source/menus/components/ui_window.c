@@ -4,7 +4,7 @@
 #include "text.h"
 #include "fonts/bigFont.h"
 #include "easing.h"
-#include "math_helpers.h"
+#include "utils/gfx.h"
 #include "ui_checkbox.h"
 #include "ui_screen.h"
 

@@ -7,6 +7,7 @@
 #include "ui_checkbox.h"
 #include "ui_window.h"
 #include "ui_textbox.h"
+#include "ui_list.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -148,6 +149,8 @@ void ui_disable_element(UIElement *e) {
 };
 
 void copy_tag_array(UIElement *e, char (*tag)[TAG_LENGTH]) {
+    if (tag == NULL) return;
+
     for (int i = 0; i < TAGS_PER_ELEMENT; i++) {
         strncpy(e->tag[i], tag[i], TAG_LENGTH - 1);
     }
@@ -309,6 +312,12 @@ void ui_load_screen(UIScreen* screen,
             screen->elements[screen->count++] =
                 ui_create_textbox(
                     x, y, w, limit, text,
+                    tag
+                );
+        } else if (strcmp(type, "list") == 0) {
+            screen->elements[screen->count++] =
+                ui_create_list(
+                    x, y, w, h,
                     tag
                 );
         }

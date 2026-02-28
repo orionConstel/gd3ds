@@ -12,7 +12,8 @@ typedef enum {
     UI_LABEL,
     UI_CHECKBOX,
     UI_WINDOW,
-    UI_TEXTBOX
+    UI_TEXTBOX,
+    UI_LIST
 } UIElementType;
 
 typedef struct {
@@ -74,6 +75,19 @@ typedef struct {
 
 typedef struct UIElement UIElement;
 
+#define UI_LIST_MAX_ITEMS 64
+
+typedef struct {
+    UIElement* items[UI_LIST_MAX_ITEMS];
+    int itemCount;
+
+    int scrollY;
+    int contentHeight;
+
+    bool dragging;
+    int lastTouchY;
+} UIList;
+
 typedef void (*UIActionFn)(void* userdata);
 
 struct UIElement {
@@ -94,6 +108,7 @@ struct UIElement {
         UICheckBoxData checkbox;
         UIWindowData window;
         UITextbox textbox;
+        UIList list;
     };
 
     char tag[TAGS_PER_ELEMENT][TAG_LENGTH];

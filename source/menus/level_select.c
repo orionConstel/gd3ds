@@ -3,6 +3,8 @@
 #include "menus/components/ui_element.h"
 #include "menus/components/ui_screen.h"
 #include "math_helpers.h"
+#include "menus/components/ui_list.h"
+#include "menus/components/ui_window.h"
 
 UIScreen screen;
 
@@ -33,6 +35,15 @@ void level_select_loop() {
 	ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_select.txt");
 
 	ui_run_func_on_tag(&screen, "win0", ui_disable_element);
+
+	UIElement window = ui_create_window(0, 0, 100, 30, 1, NULL);
+
+	UIElement *list = ui_get_element_by_tag(&screen, "list");
+	if (list) {
+		for (int i = 0; i < 10; i++) {
+			ui_list_add(list, &window);
+		}
+	}
 
 	bool prev_checked = false;
 
