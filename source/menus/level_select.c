@@ -5,6 +5,7 @@
 #include "math_helpers.h"
 #include "menus/components/ui_list.h"
 #include "menus/components/ui_window.h"
+#include "menus/components/ui_textbox.h"
 
 UIScreen screen;
 
@@ -36,7 +37,7 @@ void level_select_loop() {
 
 	ui_run_func_on_tag(&screen, "win0", ui_disable_element);
 
-	UIElement window = ui_create_window(0, 0, 100, 30, 1, NULL);
+	UIElement window = ui_create_window(0, 0, 100, 50, 1, NULL);
 
 	UIElement *list = ui_get_element_by_tag(&screen, "list");
 	if (list) {
@@ -57,6 +58,7 @@ void level_select_loop() {
 		hidTouchRead(&touchPos);
 		touch.touchPosition = touchPos;
 		touch.did_something = false;
+		touch.interacted = false;
 
 		ui_screen_update(&screen, &touch);
 

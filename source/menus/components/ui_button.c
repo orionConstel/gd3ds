@@ -54,7 +54,10 @@ static void ui_button_update(UIElement* e, UIInput* touch) {
     }
     
     // Mask background elements
-    if (inside) touch->did_something = true;
+    if (inside) {
+        touch->interacted = true;
+        touch->did_something = true;
+    }
 }
 
 static void ui_button_draw(UIElement* e) {

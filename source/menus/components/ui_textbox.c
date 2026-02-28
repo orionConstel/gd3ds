@@ -18,6 +18,7 @@ static void ui_textbox_update(UIElement* e, UIInput* touch) {
     // Mask background elements
     if (inside) {
         touch->did_something = true;
+        touch->interacted = true;
 
         if (hidKeysDown() & KEY_TOUCH) {
             read_text(e->textbox.text, e->textbox.title, e->textbox.character_limit);

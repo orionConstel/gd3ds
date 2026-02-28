@@ -19,12 +19,36 @@ void ui_list_add(UIElement* list, UIElement* item) {
     l->items[l->itemCount++] = item;
     l->contentHeight += item->h;
 }
+
+static void ui_list_forward_touch(UIElement* list, UIInput* touch) {
+    UIList* l = &list->list;
+
+    float initial_y = list->y - (list->h / 2) + l->scrollY;
     
+    for (int i = 0; i < l->itemCount; i++) {
+        UIElement* item = l->items[i];
+        // Set position
+        item->y = initial_y + (item->h / 2) + (item->h) * i;
+
+        if (!item->enabled) continue;
+
+        item->update(item, touch);
+    }
+}
+
 static void ui_list_update(UIElement* e, UIInput* touch) {
     UIList* l = &e->list;
 
     bool inside = touch->touchPosition.px >= e->x - (e->w / 2) && touch->touchPosition.px < e->x + (e->w / 2) &&
                   touch->touchPosition.py >= e->y - (e->h / 2) && touch->touchPosition.py < e->y + (e->h / 2);
+
+    if (inside) {  
+        ui_list_forward_touch(e, touch);
+        touch->did_something = true;
+
+        // Exit if used something
+        if (touch->interacted) return;
+    }
 
     // Start dragging
     if (inside && (hidKeysDown() & KEY_TOUCH)) {

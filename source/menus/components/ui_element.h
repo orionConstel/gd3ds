@@ -71,6 +71,7 @@ typedef struct {
 typedef struct {
     touchPosition touchPosition;
     bool did_something;
+    bool interacted;
 } UIInput;
 
 typedef struct UIElement UIElement;
@@ -83,9 +84,9 @@ typedef struct {
 
     int scrollY;
     int contentHeight;
+    int lastTouchY;
 
     bool dragging;
-    int lastTouchY;
 } UIList;
 
 typedef void (*UIActionFn)(void* userdata);
