@@ -8,12 +8,25 @@
 #include "ui_window.h"
 #include "ui_textbox.h"
 #include "ui_list.h"
+#include "ui_bg_gradient.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
 #include <3ds.h>
 #include <citro2d.h>
+
+C2D_SpriteSheet ui_sheet;
+C2D_SpriteSheet window_sheet;
+C2D_SpriteSheet bigFont_sheet;
+C2D_SpriteSheet bg_gradient_sheet;
+
+void ui_assets_init() {
+    ui_sheet = C2D_SpriteSheetLoad("romfs:/gfx/ui.t3x");
+    window_sheet = C2D_SpriteSheetLoad("romfs:/gfx/windows.t3x");
+    bigFont_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bigFont.t3x");
+    bg_gradient_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bg_gradient.t3x");
+}
 
 // Update all screen characters
 void ui_screen_update(UIScreen* s, UIInput* touch) {
@@ -282,7 +295,7 @@ void ui_load_screen(UIScreen* screen,
         if (strcmp(type, "button") == 0) {
             screen->elements[screen->count++] =
                 ui_create_button(
-                    x, y, id,
+                    x, y, sx, sy, id,
                     ui_find_action(actions, actionCount, actionName),
                     NULL,
                     text,
@@ -318,6 +331,11 @@ void ui_load_screen(UIScreen* screen,
             screen->elements[screen->count++] =
                 ui_create_list(
                     x, y, w, h,
+                    tag
+                );
+        } else if (strcmp(type, "bggradient") == 0) {
+            screen->elements[screen->count++] =
+                ui_create_bg_gradient(
                     tag
                 );
         }

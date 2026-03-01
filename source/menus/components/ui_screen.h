@@ -13,6 +13,13 @@ typedef struct {
     UIActionFn fn;
 } UIAction;
 
+extern C2D_SpriteSheet ui_sheet;
+extern C2D_SpriteSheet bigFont_sheet;
+extern C2D_SpriteSheet window_sheet;
+extern C2D_SpriteSheet bg_gradient_sheet;
+
+void ui_assets_init();
+
 void copy_tag_array(UIElement *e, char (*tag)[TAG_LENGTH]);
 void ui_load_screen(UIScreen* screen, const UIAction* actions, size_t count, const char* path);
 

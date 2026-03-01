@@ -63,9 +63,12 @@ static void ui_button_update(UIElement* e, UIInput* touch) {
 static void ui_button_draw(UIElement* e) {
     float scale = e->button.hoverScale;
 
+    float even_sx = closest_even_mult(e->button.image.sprite.params.pos.w, scale * e->button.scaleX);
+    float even_sy = closest_even_mult(e->button.image.sprite.params.pos.h, scale * e->button.scaleY);
+
     C2D_SpriteSetCenter(&e->button.image.sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&e->button.image.sprite, e->x, e->y);
-    C2D_SpriteSetScale(&e->button.image.sprite, scale, scale);
+    C2D_SpriteSetScale(&e->button.image.sprite, even_sx, even_sy);
     C2D_DrawSprite(&e->button.image.sprite);
 
     // Get text length in pixels
@@ -83,7 +86,7 @@ static void ui_button_draw(UIElement* e) {
 }
 
 UIElement ui_create_button(
-    int x, int y, int sprite_index, 
+    int x, int y, float sx, float sy, int sprite_index, 
     UIActionFn action,
     void *action_data,
     char *text,
@@ -109,8 +112,11 @@ UIElement ui_create_button(
     C2D_SpriteFromSheet(&e.button.image.sprite, ui_sheet, sprite_index);
     
     e.button.hoverScale = 1.f;
-    e.w = e.button.image.sprite.params.pos.w;
-    e.h = e.button.image.sprite.params.pos.h;
+    e.w = fabsf(e.button.image.sprite.params.pos.w * sx);
+    e.h = fabsf(e.button.image.sprite.params.pos.h * sy);
+
+    e.button.scaleX = sx;
+    e.button.scaleY = sy;
 
     return e;
 }

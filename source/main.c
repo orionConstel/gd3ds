@@ -14,7 +14,7 @@
 #include "mp3_player.h"
 
 #include "menus/level_select.h"
-#include "menus/components/ui_image.h"
+#include "menus/components/ui_screen.h"
 
 #define CITRA_TYPE 0x20000
 #define CITRA_VERSION 11
@@ -178,6 +178,12 @@ int main(int argc, char* argv[]) {
 
 	// Delete graphics
 	C2D_SpriteSheetFree(spriteSheet);
+	C2D_SpriteSheetFree(spriteSheet2);
+	C2D_SpriteSheetFree(bgSheet);
+	C2D_SpriteSheetFree(ui_sheet);
+	C2D_SpriteSheetFree(groundSheet);
+	C2D_SpriteSheetFree(bigFont_sheet);
+	C2D_SpriteSheetFree(window_sheet);
 
 	// Deinit libs
 	C2D_Fini();

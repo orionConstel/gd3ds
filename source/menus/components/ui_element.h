@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <3ds.h>
 #include <citro2d.h>
+#include "utils/gfx.h"
 
 #define TAGS_PER_ELEMENT 5
 #define TAG_LENGTH 16
@@ -34,6 +35,9 @@ typedef struct {
     float hoverTimer;
     float hoverScale;
 
+    float scaleX;
+    float scaleY;
+
     char text[64];
 } UIButtonData;
 
@@ -50,6 +54,7 @@ typedef struct {
 
 typedef struct {
     C2D_Image atlas;
+    u32 color;
     int border;
 } UIWindowData;
 

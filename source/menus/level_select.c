@@ -6,11 +6,11 @@
 #include "menus/components/ui_list.h"
 #include "menus/components/ui_window.h"
 #include "menus/components/ui_textbox.h"
+#include "menus/components/ui_image.h"
 
 UIScreen screen;
 
 volatile bool start_level = false;
-
 
 void action_open_level(void* data) { 
 	start_level = true; 
@@ -30,23 +30,21 @@ UIAction actions[] = {
     {"close_win0", action_close_win0}
 };
 
+UIElement *bg_gradient = NULL;
+UIElement *level_card_window = NULL;
+
 void level_select_loop() {
 	C3D_RenderTarget* bot = C2D_CreateScreenTarget(GFX_BOTTOM, GFX_LEFT);
 
 	ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/level_select.txt");
 
-	ui_run_func_on_tag(&screen, "win0", ui_disable_element);
-
-	UIElement window = ui_create_window(0, 0, 100, 50, 1, NULL);
-
-	UIElement *list = ui_get_element_by_tag(&screen, "list");
-	if (list) {
-		for (int i = 0; i < 10; i++) {
-			ui_list_add(list, &window);
-		}
-	}
-
-	bool prev_checked = false;
+	// Set bg color
+	bg_gradient = ui_get_element_by_tag(&screen, "gradient");
+	ui_image_set_tint(bg_gradient, C2D_Color32(0, 0, 234, 255));
+	
+	// Set bg color
+	level_card_window = ui_get_element_by_tag(&screen, "card_window");
+	ui_window_set_tint(level_card_window, C2D_Color32(0, 0, 0, 127));
 
 	while (aptMainLoop()) {
 		hidScanInput();
@@ -62,17 +60,8 @@ void level_select_loop() {
 
 		ui_screen_update(&screen, &touch);
 
-		UIElement *checkbox = ui_get_element_by_tag(&screen, "checky");
-		if (checkbox) {
-			bool checked = checkbox->checkbox.checked;
-			if (checked != prev_checked) {
-				printf("%d\n", checkbox->checkbox.checked);
-				prev_checked = checked;
-			}
-		}
-
 		C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
-		C2D_TargetClear(bot, C2D_Color32(3, 177, 255, 255));
+		C2D_TargetClear(bot, C2D_Color32(0, 0, 0, 255));
         C2D_SceneBegin(bot);
 
 		ui_screen_draw(&screen);

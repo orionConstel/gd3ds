@@ -2,16 +2,6 @@
 #include <citro2d.h>
 #include "ui_screen.h"
 
-C2D_SpriteSheet ui_sheet;
-C2D_SpriteSheet window_sheet;
-C2D_SpriteSheet bigFont_sheet;
-
-void ui_assets_init() {
-    ui_sheet = C2D_SpriteSheetLoad("romfs:/gfx/ui.t3x");
-    window_sheet = C2D_SpriteSheetLoad("romfs:/gfx/windows.t3x");
-    bigFont_sheet = C2D_SpriteSheetLoad("romfs:/gfx/bigFont.t3x");
-}
-
 static void ui_image_update(UIElement* e, UIInput* touch) {
     bool inside = touch->touchPosition.px >= e->x - (e->w / 2) && touch->touchPosition.px < e->x + (e->w / 2) &&
                   touch->touchPosition.py >= e->y - (e->h / 2) && touch->touchPosition.py < e->y + (e->h / 2);
@@ -34,7 +24,7 @@ static void ui_image_draw(UIElement* e) {
 void ui_image_set_tint(UIElement* e, u32 color) {
     if (e->type != UI_IMAGE) return;
 
-    C2D_PlainImageTint(&e->image.tint, color, 0.0f);
+    C2D_PlainImageTint(&e->image.tint, color, 1.0f);
     e->image.useTint = true;
 }
 
@@ -58,11 +48,14 @@ UIElement ui_create_image(int x, int y, int sprite_index, float sx, float sy, ch
     // Copy tag
     copy_tag_array(&e, tag);
 
-    e.w = e.image.sprite.params.pos.w * sx;
-    e.h = e.image.sprite.params.pos.h * sy;
+    float even_sx = closest_even_mult(e.image.sprite.params.pos.w, sx);
+    float even_sy = closest_even_mult(e.image.sprite.params.pos.h, sy);
 
-    e.image.scaleX = sx;
-    e.image.scaleY = sy;
+    e.w = e.image.sprite.params.pos.w * even_sx;
+    e.h = e.image.sprite.params.pos.h * even_sy;
+
+    e.image.scaleX = even_sx;
+    e.image.scaleY = even_sy;
 
     e.update = ui_image_update;
     e.draw = ui_image_draw;

@@ -16,8 +16,15 @@ static void ui_window_update(UIElement* e, UIInput* touch) {
     if (inside) touch->did_something = true;
 }
 
+void ui_window_set_tint(UIElement* e, u32 color) {
+    if (e->type != UI_WINDOW) return;
+
+    e->window.color = color;
+    e->image.useTint = true;
+}
+
 static void ui_window_draw(UIElement* e) {
-    draw_9_slice(e->window.atlas, e->x, e->y, e->w, e->h, e->window.border, C2D_Color32(255, 255, 255, 255));
+    draw_9_slice(e->window.atlas, e->x, e->y, e->w, e->h, e->window.border, e->window.color);
 }
 
 UIElement ui_create_window(
@@ -32,6 +39,8 @@ UIElement ui_create_window(
         .update = ui_window_update,
         .draw = ui_window_draw
     };
+
+    e.window.color = C2D_Color32(255, 255, 255, 255);
 
     // Copy tag
     copy_tag_array(&e, tag);

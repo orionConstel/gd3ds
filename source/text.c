@@ -71,23 +71,22 @@ void draw_text(Charset font, C2D_SpriteSheet sheet, const float x, const float y
         if (character != NULL) {
             C2D_Sprite sprite = { 0 };
 
-            int width = character->width;
-            int height = character->height;
-            float xoffset = (character->xOffset + (width / 2.f)) * scale;
-            float yoffset = (character->yOffset + (height / 2.f)) * scale;
+            float xoffset = (character->xOffset) * scale;
+            float yoffset = (character->yOffset) * scale;
             float xadvance = character->xAdvance * scale;
 
-            
             int index = character->spriteIndex;
 
             float final_x = x + offset + xoffset - length * alignment;
-            float final_y = y + yoffset - 19 * scale;
+            float final_y = y + yoffset - floorf(19 * scale);
+
+            final_x = (scale == 1.0f) ? roundf(final_x) : final_x;
+            final_y = (scale == 1.0f) ? roundf(final_y) : final_y;
 
             if (index >= 0) { 
                 // Draw glyph so its center is at (final_x, final_y)
                 C2D_SpriteFromSheet(&sprite, sheet, index);
-                C2D_SpriteSetCenter(&sprite, 0.5f, 0.5f);
-                C2D_SpriteSetPos(&sprite, roundf(final_x), roundf(final_y));
+                C2D_SpriteSetPos(&sprite, final_x, final_y);
                 C2D_SpriteSetScale(&sprite, scale, scale);
                 C2D_DrawSprite(&sprite);
             }

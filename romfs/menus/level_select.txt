@@ -1,15 +1,12 @@
-button x=160 y=60 id=104 action="open_level" text="1"
-# label x=160 y=30 text="I love labels" align=CENTER
-# image x=36 y=205 id=178
-# image x=284 y=205 id=178 sx=-1.0
-# checkbox x=160 y=100 tag="checky"
+bggradient tag="gradient"
+image x=160 y=13 id=198 sx=0.75 sy=0.75
+button x=20 y=20 id=6 action="none"
+button x=20 y=120 id=376 action="none" sx=-1.0
+button x=300 y=120 id=376 action="none"
 
-list x=160 y=150 w=200 h=140 tag="list"
+# level thingy
 
-# button x=160 y=140 id=104 action="open_win0" text="Open"
-# textbox x=160 y=180 w=200 title="Input random text:"
-
-# Epic window
-window x=160 y=120 w=300 h=100 tag="win0" style=1
-label x=160 y=100 tag="win0" text="Window test" align=CENTER
-button x=160 y=140 tag="win0" id=102 action="close_win0" text="Ok"
+window x=160 y=90 w=220 h=80 style=2 tag="level_card,card_window"
+label x=160 y=90 text="TEST" align=CENTER tag="level_card,level_title"
+image x=260 y=60 id=408 tag="level_card"
+label x=250 y=60 text="42069" align=RIGHT scale=0.40 tag="level_card,level_title"
