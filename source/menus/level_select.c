@@ -116,7 +116,6 @@ void update_level_face(int level) {
 }
 
 void action_open_level(void* data) { 
-	printf("lol\n");
 	start_level = true; 
 };
 
@@ -216,6 +215,8 @@ void level_select_loop() {
 
 	level_card_2_window = ui_get_element_by_tag(&screen, "card_window_2");
 	ui_window_set_tint(level_card_2_window, C2D_Color32(0, 0, 0, 127));
+	
+	ui_window_set_tint(ui_get_element_by_tag(&screen_top, "face_card"), C2D_Color32(0, 0, 0, 127));
 
 	// Get level card components
 	level_card_title = ui_get_element_by_tag(&screen, "level_title");
@@ -248,6 +249,16 @@ void level_select_loop() {
 
 	while (aptMainLoop()) {
 		hidScanInput();
+		u32 kDown = hidKeysDown();
+		if (kDown & KEY_LEFT) {
+			action_move_left(NULL);
+		}
+		if (kDown & KEY_RIGHT) {
+			action_move_right(NULL);
+		}
+		if (kDown & (KEY_START | KEY_A)) {
+			action_open_level(NULL);
+		}
         
 		if (start_level) {
 			game_state = STATE_GAME;

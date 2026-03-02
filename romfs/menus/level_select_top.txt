@@ -1,3 +1,4 @@
 bggradient tag="gradient"
-window x=200 y=120 w=220 h=200 style=1
-image x=200 y=120 id=239 sx=2.0 sy=2.0 tag="level_face"
+window x=250 y=120 w=220 h=200 style=1
+window x=70 y=120 w=60 h=60 style=2 tag="face_card"
+image x=70 y=120 id=239 sx=1.0 sy=1.0 tag="level_face"
