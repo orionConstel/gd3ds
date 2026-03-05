@@ -27,13 +27,11 @@ jobs:
       - name: Publish 3dsx to GH Actions
         uses: actions/upload-artifact@main
         with:
-          name: gd3ds
+          name: gd3ds-3dsx
           path: out/3dsx/rom
-          archive: false
       - name: Publish cia to GH Actions
         uses: actions/upload-artifact@main
         with:
-          name: gd3ds
+          name: gd3ds-cia
           path: out/cia/rom
-          archive: false
             
