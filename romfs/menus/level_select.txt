@@ -18,3 +18,12 @@ actionarea x=160 y=90 w=220 h=80 action="open_level"
 
 button x=20 y=120 id=376 action="move_left" sx=-1.0
 button x=300 y=120 id=376 action="move_right"
+
+image x=66 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272 
+image x=160 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272
+image x=254 y=258 id=1 sy=0.727272 sheet=6 tag="ground" sx=0.727272
+
+image x=160 y=212 id=0 sheet=6 sx=0.727272 sy=0.727272 
+
+image x=36 y=205 id=178
+image x=284 y=205 id=178 sx=-1.0

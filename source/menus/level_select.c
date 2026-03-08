@@ -46,6 +46,7 @@ UIElement *level_card_2_stars = NULL;
 UIElement *level_card_2_face = NULL;
 
 #define ANIM_DURATION 0.8f
+#define COLOR_FADE_DURATION 0.1f
 
 #define C2D_Color32Const(r, g, b, a) (r | (g << (u32)8) | (b << (u32)16) | (a << (u32)24))
 
@@ -155,7 +156,7 @@ void action_move_right(void* data) {
 	ui_run_func_on_tag(&screen, "level_card_2", enable_card_2);
 	ui_run_func_on_tag(&screen, "level_card_2", level_card_move_right);
 	
-	upload_color_to_buffer(0, default_lvl_colors[curr_level_id % NUM_MENU_COLORS], ANIM_DURATION);
+	upload_color_to_buffer(0, default_lvl_colors[curr_level_id % NUM_MENU_COLORS], COLOR_FADE_DURATION);
 
 	update_level_name(curr_level_id - 1, 0);
 	update_level_stars(curr_level_id - 1, 0);
@@ -178,7 +179,7 @@ void action_move_left(void* data) {
 	ui_run_func_on_tag(&screen, "level_card_2", enable_card_2);
 	ui_run_func_on_tag(&screen, "level_card_2", level_card_move_left);
 
-	upload_color_to_buffer(0, default_lvl_colors[curr_level_id % NUM_MENU_COLORS], ANIM_DURATION);
+	upload_color_to_buffer(0, default_lvl_colors[curr_level_id % NUM_MENU_COLORS], COLOR_FADE_DURATION);
 
 	update_level_name(curr_level_id + 1, 0);
 	update_level_stars(curr_level_id + 1, 0);
@@ -192,6 +193,11 @@ void action_move_left(void* data) {
 void action_exit(void* data) {
 	exit_flag = true;
 	set_fade_status(FADE_STATUS_OUT);
+}
+
+void tint_ground(UIElement *e) {
+	ColorChannel channel = channels[0];
+	ui_image_set_tint(e, C2D_Color32(channel.color.r, channel.color.g, channel.color.b, 255));
 }
 
 static UIAction actions[] = {
@@ -309,6 +315,7 @@ void level_select_loop() {
 
 		ui_image_set_tint(bg_gradient, C2D_Color32(channel.color.r, channel.color.g, channel.color.b, 255));
 		ui_image_set_tint(bg_gradient_top, C2D_Color32(channel.color.r, channel.color.g, channel.color.b, 255));
+		ui_run_func_on_tag(&screen, "ground", tint_ground);
 
 		handle_card_movement();
 

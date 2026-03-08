@@ -17,6 +17,8 @@
 #include <3ds.h>
 #include <citro2d.h>
 
+#include "graphics.h"
+
 C2D_SpriteSheet ui_sheet;
 C2D_SpriteSheet ui_2_sheet;
 C2D_SpriteSheet window_sheet;
@@ -39,6 +41,14 @@ C2D_SpriteSheet *get_sheet(int sheet) {
             return &ui_2_sheet;
         case 2:
             return &window_sheet;
+        case 3:
+            return &spriteSheet;
+        case 4:
+            return &spriteSheet2;
+        case 5:
+            return &bgSheet;
+        case 6:
+            return &groundSheet;
     }
     return NULL;
 }
