@@ -120,37 +120,37 @@ void handle_col_triggers() {
 }
 
 
-void upload_to_buffer(Object *obj, int channel) {
+void upload_to_buffer(int obj, int channel) {
     if (channel == 0) channel = 1;
     ColTriggerBuffer *buffer = &col_trigger_buffer[channel];
     buffer->old_color = channels[channel].color;
-    if (obj->p1_color) {
+    if (objects.p1_color[obj]) {
         buffer->new_color.r = p1_color.r;
         buffer->new_color.g = p1_color.g;
         buffer->new_color.b = p1_color.b;
-    } else if (obj->p2_color) {
+    } else if (objects.p2_color[obj]) {
         buffer->new_color.r = p2_color.r;
         buffer->new_color.g = p2_color.g;
         buffer->new_color.b = p2_color.b;
     } else {
-        buffer->new_color.r = obj->trig_colorR;
-        buffer->new_color.g = obj->trig_colorG;
-        buffer->new_color.b = obj->trig_colorB;
+        buffer->new_color.r = objects.trig_colorR[obj];
+        buffer->new_color.g = objects.trig_colorG[obj];
+        buffer->new_color.b = objects.trig_colorB[obj];
     }
 
     if (channel < CHANNEL_BG) {
-        channels[channel].blending = obj->blending;
+        channels[channel].blending = objects.blending[obj];
     }
     
     
-    if (obj->trig_duration == 0) {
+    if (objects.trig_duration[obj] == 0) {
         Color color_to_lerp = buffer->new_color;
 
         channels[channel].color = color_to_lerp;
         return;
     }
     
-    buffer->seconds = obj->trig_duration;
+    buffer->seconds = objects.trig_duration[obj];
     buffer->time_run = 0;
     buffer->active = true;
 }
@@ -166,8 +166,8 @@ void upload_color_to_buffer(int channel, u32 color, float seconds) {
     buffer->active = true;
 }
 
-void run_trigger(Object *obj) {
-    switch (obj->id) {
+void run_trigger(int obj) {
+    switch (objects.id[obj]) {
         case TRIGGER_FADE_NONE:
             current_fading_effect = FADE_NONE;
             break;
@@ -214,7 +214,7 @@ void run_trigger(Object *obj) {
 
         case BG_TRIGGER:
             upload_to_buffer(obj, CHANNEL_BG);
-            if (!obj->tintGround) break;
+            if (!objects.tintGround[obj]) break;
         
         case GROUND_TRIGGER:
             upload_to_buffer(obj, CHANNEL_GROUND);
@@ -258,10 +258,10 @@ void run_trigger(Object *obj) {
 //            break;
 
         case COL_TRIGGER: // 2.0 color trigger
-            upload_to_buffer(obj, obj->target_color_id);
+            upload_to_buffer(obj, objects.target_color_id[obj]);
             break;
     }
-    obj->activated = true;
+    objects.activated[obj] = true;
 }
 
 void handle_triggers() {
@@ -272,9 +272,9 @@ void handle_triggers() {
 
     Section *sec = get_or_create_section(section);
     for (int i = 0; i < sec->object_count; i++) {
-        Object *obj = sec->objects[i];
+        int obj = sec->objects[i];
         
-        if (!obj->activated && !obj->touch_triggered) {
+        if (!objects.activated[obj] && !objects.touch_triggered[obj]) {
             //if (obj->touch_triggered) {
             //    // Try p1
             //    if (intersect(
@@ -290,7 +290,7 @@ void handle_triggers() {
             //    )) {
             //        run_trigger(obj);
             //    }
-            if (obj->x < cam_x + SCREEN_WIDTH / 2) {
+            if (objects.x[obj] < cam_x + SCREEN_WIDTH / 2) {
                 run_trigger(obj);
             }
         }

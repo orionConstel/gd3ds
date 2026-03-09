@@ -2,7 +2,6 @@
 #include <3ds.h>
 #include <stdbool.h>
 #include "level_loading.h"
-void upload_to_buffer(Object *obj, int channel);
 
 enum ColorChannelIDs {
     NONE,
@@ -77,6 +76,6 @@ void handle_col_channel(int chan);
 void handle_col_triggers();
 void handle_triggers();
 void upload_color_to_buffer(int channel, u32 color, float seconds);
-void upload_to_buffer(Object *obj, int channel);
+void upload_to_buffer(int obj, int channel);
 int convert_one_point_nine_channel(int channel);
 ColTriggerBuffer *get_buffer(int chan);

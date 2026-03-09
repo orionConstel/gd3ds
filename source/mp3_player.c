@@ -10,7 +10,7 @@
 
 #define MUSIC_CHANNEL 0
 #define MP3_BUF_SIZE 4096
-#define NUM_BUFS 2
+#define NUM_BUFS 4
 
 static u32 *audioBuffer;
 static LightEvent soundEvent;
@@ -30,17 +30,17 @@ static Thread threadId = NULL;
 
 static ndspWaveBuf waveBuf[NUM_BUFS];
 
-u32 samplerate_mp3(void)
+static inline u32 samplerate_mp3(void)
 {
 	return rate;
 }
 
-u32 buffsize_mp3(void)
+static inline u32 buffsize_mp3(void)
 {
 	return buffSize;
 }
 
-u32 channels_mp3(void)
+static inline u32 channels_mp3(void)
 {
 	return audio_channels;
 }
@@ -88,17 +88,30 @@ bool mp3_init(void *file) {
     int err = 0;
     int encoding = 0;
 
-    if((mh = mpg123_new(NULL, &err)) == NULL) {
+    if ((mh = mpg123_new(NULL, &err)) == NULL) {
         printf("Couldn't new it\n");
         return 0;
     }
 
-    if(mpg123_open(mh, file) != MPG123_OK || mpg123_getformat(mh, &rate, &audio_channels, &encoding) != MPG123_OK) {
-        printf("Couldn't open or get format\n");
+    mpg123_format_none(mh);
+
+    mpg123_format(mh, 44100, MPG123_STEREO, MPG123_ENC_SIGNED_16);
+    mpg123_format(mh, 44100, MPG123_MONO,   MPG123_ENC_SIGNED_16);
+
+    mpg123_format(mh, 48000, MPG123_STEREO, MPG123_ENC_SIGNED_16);
+    mpg123_format(mh, 48000, MPG123_MONO,   MPG123_ENC_SIGNED_16);
+
+    if (mpg123_open(mh, file) != MPG123_OK) {
+        printf("Couldn't open file\n");
         return 0;
     }
 
-	buffSize = MP3_BUF_SIZE * channels_mp3();
+    if (mpg123_getformat(mh, &rate, &audio_channels, &encoding) != MPG123_OK) {
+        printf("Couldn't get format\n");
+        return 0;
+    }
+
+    buffSize = MP3_BUF_SIZE * audio_channels;
 
     return 1;
 }
@@ -140,11 +153,6 @@ void audio_thread(void *const file) {
 
                 ndspChnWaveBufAdd(MUSIC_CHANNEL, buf);
             }
-            
-            DSP_FlushDataCache(
-                buf->data_pcm16,
-                buf->nsamples * channels_mp3() * sizeof(int16_t)
-            );
         }
 
         if (lastbuf)

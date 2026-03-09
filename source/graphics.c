@@ -67,26 +67,26 @@ static inline void spawn_sprite_c2d(
     C2D_SpriteSetRotation(out, rotation);
 }
 
-inline int get_color_channel(int col_type, Object *obj, const GameObject *game_obj) {
+inline int get_color_channel(int col_type, int obj, const GameObject *game_obj) {
 	int col_channel = 0;
 	if (col_type == COLOR_TYPE_BLACK) col_channel = 0;
 	else if (col_type == COLOR_TYPE_WHITE) col_channel = -1;
 	else {
-		if (obj->v1p9_col_channel) {
-			if (col_type == COLOR_TYPE_DETAIL) col_channel = obj->v1p9_col_channel;
+		if (objects.v1p9_col_channel[obj]) {
+			if (col_type == COLOR_TYPE_DETAIL) col_channel = objects.v1p9_col_channel[obj];
 		} else {
-			if (obj->col_channel) {
+			if (objects.col_channel[obj]) {
 				if (col_type == COLOR_TYPE_BASE) {
-					col_channel = obj->col_channel;
+					col_channel = objects.col_channel[obj];
 				} else if (!obj_has_main(game_obj)) {
-					col_channel = obj->col_channel;
+					col_channel = objects.col_channel[obj];
 				}
 			}
 
-			if (obj->detail_col_channel) {
+			if (objects.detail_col_channel[obj]) {
 				if (col_type == COLOR_TYPE_DETAIL) {
 					if (obj_has_main(game_obj)) {
-						col_channel = obj->detail_col_channel;
+						col_channel = objects.detail_col_channel[obj];
 					}
 				}
 			}
@@ -95,7 +95,7 @@ inline int get_color_channel(int col_type, Object *obj, const GameObject *game_o
 	return col_channel;
 }
 
-float get_fading_obj_fade(Object *obj, float x, float right_edge) {
+float get_fading_obj_fade(float x, float right_edge) {
     float fading_obj_width = FADING_OBJ_WIDTH;
     if (x < FADING_OBJ_PADDING || x > right_edge - FADING_OBJ_PADDING)
         return 1.f;
@@ -108,7 +108,7 @@ float get_fading_obj_fade(Object *obj, float x, float right_edge) {
 }
 
 void spawn_object_at(
-	Object *obj_game,
+	int obj_game,
     int id,
     float x,
     float y,
@@ -134,12 +134,12 @@ void spawn_object_at(
 	float sx = scale * flip_x_mult;
 	float sy = scale * flip_y_mult;
 
-	C2D_Sprite root;
-
 	if (sprite_count >= MAX_SPRITES - 1) return;
 
 	// Skip if no texture
 	if (obj->texture >= 0) {
+		SpriteObject *vo = &viewable_objects[sprite_count];
+
 		float local_x = obj->x * flip_x_mult;
 		float local_y = obj->y * flip_y_mult;
 
@@ -153,7 +153,7 @@ void spawn_object_at(
 		C2D_SpriteSheet *sheet = get_sprite_sheet(obj->texture, &texture);
 
 		spawn_sprite_c2d(
-			&root,
+			&vo->spr,
 			sheet,
 			texture,
 			p_x,
@@ -162,10 +162,7 @@ void spawn_object_at(
 			sy,
 			rad
 		);
-		
-		SpriteObject *vo = &viewable_objects[sprite_count];
 
-		vo->spr = root;
 		vo->obj = obj_game;
 		vo->layer = 0;
 		vo->col_type = obj->color_type;
@@ -182,7 +179,9 @@ void spawn_object_at(
 		if (sprite_count >= MAX_SPRITES - 1) return;
 		
 		// Skip if no texture
-		if (c->texture >= 0) {
+		if (c->texture >= 0) {	
+			SpriteObject *vo = &viewable_objects[sprite_count];
+
 			float c_local_x = c->x * flip_x_mult;
 			float c_local_y = c->y * flip_y_mult;
 
@@ -199,7 +198,7 @@ void spawn_object_at(
 			C2D_SpriteSheet *sheet = get_sprite_sheet(c->texture, &texture);
 
 			spawn_sprite_c2d(
-				&root,
+				&vo->spr,
 				sheet,
 				texture,
 				c_x,
@@ -208,10 +207,7 @@ void spawn_object_at(
 				c->scale_y * c_flip_y_mult * sy,
 				C3D_AngleFromDegrees(c->rot) + rad
 			);
-				
-			SpriteObject *vo = &viewable_objects[sprite_count];
 
-			vo->spr = root;
 			vo->obj = obj_game;
 			vo->layer = i + 1;
 			vo->col_type = c->color_type;
@@ -225,13 +221,13 @@ void spawn_object_at(
 
 static inline uint32_t make_sort_key(const SpriteObject *s)
 {
-    const Object *obj = s->obj;
-    const GameObject *game_obj = &game_objects[obj->id];
+    const int obj = s->obj;
+    const GameObject *game_obj = &game_objects[objects.id[obj]];
 
-    int zlayer = obj->zlayer ? obj->zlayer : game_obj->z_layer;
+    int zlayer = objects.zlayer[obj] ? objects.zlayer[obj] : game_obj->z_layer;
 
 	// Blending makes zlayer one 
-	int col_channel = obj->col_channel;
+	int col_channel = objects.col_channel[obj];
 	if (col_channel > 0 && (channels[col_channel].blending ^ ((zlayer & 1) == 0))) {
 		zlayer--;
 	}
@@ -245,7 +241,7 @@ static inline uint32_t make_sort_key(const SpriteObject *s)
 
 	int sheet = tex < SPRITESHEET2_START ? 1 : 0;
 
-    int zorder = obj->zorder ? obj->zorder : game_obj->z_order;
+    int zorder = objects.zorder[obj] ? objects.zorder[obj] : game_obj->z_order;
 
 
     uint32_t zl = (uint32_t)(zlayer + 8);     // fits in 7 bits
@@ -314,8 +310,8 @@ int get_object_layers(int id) {
 	return count;
 }
 
-bool object_fades(Object *obj) {
-	switch (obj->id) {
+bool object_fades(int obj) {
+	switch (objects.id[obj]) {
 		case 146:
 		case 147:
 		case 206:
@@ -357,10 +353,10 @@ float get_out_scale_fade(float x, int right_edge) {
     return 1 + ((fade / 255.f) / 2);
 }
 
-int get_opacity(Object *obj, float x) {
+int get_opacity(int obj, float x) {
     int opacity = obj_edge_fade(x, SCREEN_WIDTH / SCALE);
 
-    switch (obj->id) {
+    switch (objects.id[obj]) {
         case 90:
         case 91:
         case 92:
@@ -372,7 +368,7 @@ int get_opacity(Object *obj, float x) {
         case 311:
         case 1747:
         case 1748:
-            if (obj->transition_applied == FADE_NONE) opacity = 255;
+            if (objects.transition_applied[obj] == FADE_NONE) opacity = 255;
             break;
             
         case 207:
@@ -386,67 +382,67 @@ int get_opacity(Object *obj, float x) {
         case 694:
         case 331:
         case 333:
-            bool blending = channels[obj->detail_col_channel].blending;
-            if (!blending && obj->transition_applied == FADE_NONE) opacity = 255;
+            bool blending = channels[objects.detail_col_channel[obj]].blending;
+            if (!blending && objects.transition_applied[obj] == FADE_NONE) opacity = 255;
             break;
     }
 
     return opacity;
 }
 
-void handle_special_fading(Object *obj, float calc_x, float calc_y) {
+void handle_special_fading(int obj, float calc_x, float calc_y) {
     switch (current_fading_effect) {
         case FADE_INWARDS:
             if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                obj->transition_applied = FADE_UP;
+                objects.transition_applied[obj] = FADE_UP;
             } else {
-                obj->transition_applied = FADE_DOWN;
+                objects.transition_applied[obj] = FADE_DOWN;
             }
             break;
         case FADE_OUTWARDS:
             if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                obj->transition_applied = FADE_DOWN;
+                objects.transition_applied[obj] = FADE_DOWN;
             } else {
-                obj->transition_applied = FADE_UP;
+                objects.transition_applied[obj] = FADE_UP;
             }
             break;
         case FADE_CIRCLE_LEFT:
             if (calc_x > (SCREEN_WIDTH / SCALE / 2)) {
                 if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                    obj->transition_applied = FADE_UP_STATIONARY;
+                    objects.transition_applied[obj] = FADE_UP_STATIONARY;
                 } else {
-                    obj->transition_applied = FADE_DOWN_STATIONARY;
+                    objects.transition_applied[obj] = FADE_DOWN_STATIONARY;
                 }
             } else {
                 if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                    obj->transition_applied = FADE_UP_SLOW;
+                    objects.transition_applied[obj] = FADE_UP_SLOW;
                 } else {
-                    obj->transition_applied = FADE_DOWN_SLOW;
+                    objects.transition_applied[obj] = FADE_DOWN_SLOW;
                 }
             }
             break;
         case FADE_CIRCLE_RIGHT:
             if (calc_x > (SCREEN_WIDTH / SCALE / 2)) {
                 if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                    obj->transition_applied = FADE_UP_SLOW;
+                    objects.transition_applied[obj] = FADE_UP_SLOW;
                 } else {
-                    obj->transition_applied = FADE_DOWN_SLOW;
+                    objects.transition_applied[obj] = FADE_DOWN_SLOW;
                 }
             } else {
                 if (calc_y > (SCREEN_HEIGHT / SCALE / 2)) {
-                    obj->transition_applied = FADE_UP_STATIONARY;
+                    objects.transition_applied[obj] = FADE_UP_STATIONARY;
                 } else {
-                    obj->transition_applied = FADE_DOWN_STATIONARY;
+                    objects.transition_applied[obj] = FADE_DOWN_STATIONARY;
                 }
             }
             break;
         default:
-            obj->transition_applied = current_fading_effect;  
+            objects.transition_applied[obj] = current_fading_effect;  
     }   
 }
 
-void get_fade_vars(Object *obj, float x, int *fade_x, int *fade_y, float *fade_scale) {
-    switch (obj->transition_applied) {
+void get_fade_vars(int obj, float x, int *fade_x, int *fade_y, float *fade_scale) {
+    switch (objects.transition_applied[obj]) {
         case FADE_NONE:
             break;
         case FADE_UP:
@@ -575,10 +571,10 @@ void draw_objects() {
 
 		Section *sec = get_or_create_section(section);
 		for (int i = 0; i < sec->object_count; i++) {
-			Object *obj = sec->objects[i];
+			int obj = sec->objects[i];
 			
-            float calc_x = ((obj->x - cam_x));
-            float calc_y = SCREEN_HEIGHT - ((obj->y - cam_y));  
+            float calc_x = ((objects.x[obj] - cam_x));
+            float calc_y = SCREEN_HEIGHT - ((objects.y[obj] - cam_y));  
 			if (calc_x < -60 || calc_x >= (SCREEN_WIDTH / SCALE) + 60) continue;
 			if (calc_y < -60 || calc_y >= (SCREEN_HEIGHT / SCALE) + 60) continue;
 
@@ -594,7 +590,7 @@ void draw_objects() {
 			get_fade_vars(obj, calc_x, &fade_x, &fade_y, &fade_scale);
 			
 			// Handle special fade types
-			if (obj->transition_applied == FADE_DOWN_STATIONARY || obj->transition_applied == FADE_UP_STATIONARY) {
+			if (objects.transition_applied[obj] == FADE_DOWN_STATIONARY || objects.transition_applied[obj] == FADE_UP_STATIONARY) {
 				if (fade_val < 255) {
 					if (calc_x > (SCREEN_WIDTH / SCALE) / 2) {
 						calc_x = SCREEN_WIDTH / SCALE - FADE_WIDTH;
@@ -606,12 +602,12 @@ void draw_objects() {
 
 			spawn_object_at(
 				obj,
-				obj->id,
+				objects.id[obj],
 				calc_x,
 				calc_y,
-				obj->rotation,
-				obj->flippedH,
-				obj->flippedV,
+				objects.rotation[obj],
+				objects.flippedH[obj],
+				objects.flippedV[obj],
 				fade_scale
 			);
 		}
@@ -648,25 +644,23 @@ void draw_objects() {
 			blend_enabled = false;
 		}
 		
-		Object *game_object = obj->obj;
-		float x = ((game_object->x - cam_x));
+		int game_object = obj->obj;
+		float x = ((objects.x[game_object] - cam_x));
 		
 		float opacity = obj->opacity;
 		if (object_fades(game_object)) {
-			opacity *= get_fading_obj_fade(game_object, x, SCREEN_WIDTH / SCALE);
+			opacity *= get_fading_obj_fade(x, SCREEN_WIDTH / SCALE);
 		}
 		
-		if (game_object->transition_applied >= FADE_UP_SLOW) {
-			int fade_x = 0;
-			int fade_y = 0;
+		int fade_x = 0;
+		int fade_y = 0;
 
-			float fade_scale = 1.f;
+		float fade_scale = 1.f;
 
-			get_fade_vars(game_object, x, &fade_x, &fade_y, &fade_scale);
+		get_fade_vars(game_object, x, &fade_x, &fade_y, &fade_scale);
 
 
-			C2D_SpriteMove(&obj->spr, fade_x, fade_y);
-		}
+		C2D_SpriteMove(&obj->spr, fade_x, fade_y);
 
 		// Cull invisible objects
 		if ((col.color.r | col.color.g | col.color.b) == 0 && blend_enabled) continue;

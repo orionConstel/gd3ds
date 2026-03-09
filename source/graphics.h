@@ -29,7 +29,7 @@ typedef struct
 typedef struct
 {
 	C2D_Sprite spr;
-	Object *obj;
+	int obj;
 	int layer;
 	int col_type;
 	float opacity;

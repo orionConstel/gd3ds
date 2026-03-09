@@ -21,27 +21,27 @@ typedef union {
 } GDValue;
 
 typedef struct {
-    int id;
-    float x, y;
-    float rotation;
-    int zlayer, zorder;
-    float trig_duration;
+    int *id;
+    float *x, *y;
+    float *rotation;
+    int *zlayer, *zorder;
+    float *trig_duration;
 
-    unsigned short v1p9_col_channel;
-    unsigned short col_channel;
-    unsigned short detail_col_channel;
-    unsigned short target_color_id;
+    unsigned short *v1p9_col_channel;
+    unsigned short *col_channel;
+    unsigned short *detail_col_channel;
+    unsigned short *target_color_id;
 
-    unsigned char transition_applied;
-    unsigned char trig_colorR, trig_colorG, trig_colorB;
-    bool tintGround;
-    bool p1_color, p2_color;
-    bool blending;
-    bool touch_triggered;
-    bool flippedH, flippedV;
+    unsigned char *transition_applied;
+    unsigned char *trig_colorR, *trig_colorG, *trig_colorB;
+    bool *tintGround;
+    bool *p1_color, *p2_color;
+    bool *blending;
+    bool *touch_triggered;
+    bool *flippedH, *flippedV;
 
-    bool activated;
-} Object;
+    bool *activated;
+} ObjectsArray;
 
 typedef struct {
     int fromRed;
@@ -57,7 +57,7 @@ typedef struct {
 
 
 typedef struct Section {
-    Object **objects;
+    int *objects;
     int object_count;
     int object_capacity;
 
@@ -65,7 +65,7 @@ typedef struct Section {
     struct Section *next; // For chaining in hash map
 } Section;
 
-extern Object *objectArray;
+extern ObjectsArray objects;
 
 char *read_file(const char *filepath, size_t *out_size);
 char *decompress_level(char *data);
