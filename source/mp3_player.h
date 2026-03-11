@@ -3,7 +3,7 @@
 #define AMP_MIN 0.1f
 #define AMP_MAX 1.0f
 
-#define AMP_DECAY 0.08f
+#define AMP_DECAY 0.15f
 #define AMP_I_DECAY (1.f - AMP_DECAY)
 
 #define POWER_THRESH_MULTIPLIER 0.75f
