@@ -750,7 +750,8 @@ void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_
     for (float i = -GROUND_SIZE; i < (screen_width / SCALE) + GROUND_SIZE; i += GROUND_SIZE) {
 		C2D_Sprite ground = { 0 };
 		C2D_SpriteFromSheet(&ground, groundSheet, 1);
-		C2D_SpriteSetPos(&ground, (int)calc_x + i, (int)calc_y);
+		C3D_TexSetFilter(ground.image.tex, GPU_LINEAR, GPU_LINEAR);
+		C2D_SpriteSetPos(&ground, calc_x + i, calc_y);
 		C2D_SpriteSetScale(&ground, 1.f, mult);
 		C2D_DrawSpriteTinted(&ground, &tint);
     }
@@ -766,6 +767,7 @@ void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_
 	float line_offset = -((GROUND_SIZE / 2) - (LINE_HEIGHT / 2)) * mult;
     C2D_Sprite line = { 0 };
 	C2D_SpriteFromSheet(&line, groundSheet, 0);
+	C3D_TexSetFilter(line.image.tex, GPU_LINEAR, GPU_LINEAR);
 	C2D_SpriteSetPos(&line, screen_width / SCALE / 2, (int)((GROUND_SIZE / 2) + calc_y + line_offset));
 	C2D_SpriteSetCenter(&line, 0.5f, 0.5f);
 	C2D_DrawSpriteTinted(&line, &tint);
