@@ -43,6 +43,7 @@ extern ColorChannel channels[COL_CHANNEL_NUM];
 
 extern Color p1_color;
 extern Color p2_color;
+extern Color glow_color;
 
 #define BG_TRIGGER 29
 #define GROUND_TRIGGER 30

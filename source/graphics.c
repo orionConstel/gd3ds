@@ -5,6 +5,7 @@
 #include "color_channels.h"
 #include <stdlib.h>
 #include "mp3_player.h"
+#include "icons.h"
 
 bool aaEnabled = false;
 bool wideEnabled = false;
@@ -17,6 +18,7 @@ C2D_SpriteSheet spriteSheet2;
 C2D_SpriteSheet glowSheet;
 C2D_SpriteSheet bgSheet;
 C2D_SpriteSheet groundSheet;
+C2D_SpriteSheet iconSheet;
 
 static SortItem buf_a[MAX_SPRITES];
 static SortItem buf_b[MAX_SPRITES];
@@ -37,6 +39,20 @@ static C2D_SpriteSheet *get_sprite_sheet(int index, int *rel_index) {
 
 	*rel_index = index - SPRITESHEET2_START;
 	return &spriteSheet2;
+}
+
+void init_player_colors() {
+	p1_color.r = 0;
+    p1_color.g = 255;
+    p1_color.b = 0;
+
+    p2_color.r = 0;
+    p2_color.g = 255;
+    p2_color.b = 255;
+    
+    glow_color.r = 0;
+    glow_color.g = 255;
+    glow_color.b = 255;
 }
 
 void cache_all_sprites() {
@@ -894,5 +910,87 @@ void draw_objects() {
 		
 		C2D_PlainImageTint(&tint, C2D_Color32(col.color.r, col.color.g, col.color.b, get_opacity(game_object, x) * opacity), 1.f);
 		C2D_DrawSpriteTinted(&obj->spr, &tint);
+	}
+}
+
+void spawn_icon_at(
+	int gamemode,
+    int id,
+	bool glow,
+    float x,
+    float y,
+	float deg,
+	unsigned char flip_x,
+	unsigned char flip_y,
+	float scale
+) {
+	const Icon icon = icons[gamemode][id];
+	const IconPart *parts = icon.parts;
+
+	float rad = C3D_AngleFromDegrees(deg);
+	float cos_r = cosf(rad);
+	float sin_r = sinf(rad);
+
+	int flip_x_mult = (flip_x ? -1 : 1);
+	int flip_y_mult = (flip_y ? -1 : 1);
+
+	float m00 = cos_r;
+	float m01 = sin_r;
+	float m10 = sin_r;
+	float m11 = -cos_r;
+
+	float sx = scale * flip_x_mult;
+	float sy = scale * flip_y_mult;
+
+	C2D_Sprite spr = { 0 };
+
+	C2D_ImageTint tints[icon.part_count];
+
+	for (size_t i = 0; i < icon.part_count; i++) {
+		C2D_PlainImageTint(&tints[i], C2D_Color32(255, 255, 255, 255), 1.0f);
+	}
+
+	int count = icon.part_count;
+
+	if (!glow) count--;
+
+	C2D_PlainImageTint(&tints[0], C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255), 1.0f);
+	C2D_PlainImageTint(&tints[1], C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255), 1.0f);
+	C2D_PlainImageTint(&tints[icon.part_count - 1], C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255), 1.0f);
+
+	for (size_t i = 0; i < count - glow; i++) {
+		size_t real_index = i;
+		// Swap p1 and p2 layers
+		if (i==0) real_index = 1;
+		else if (i==1) real_index = 0;
+
+		if (gamemode == GAMEMODE_BIRD) {
+			if (i==2) real_index = 0;
+			else if (i < 2) real_index++;
+		}
+		
+		const IconPart *part = &parts[real_index];
+
+		if (part->texture >= 0) {
+
+			float local_x = part->x * flip_x_mult;
+			float local_y = part->y * flip_y_mult;
+
+			float rot_x = local_x * m00 + local_y * m01;
+			float rot_y = local_x * m10 + local_y * m11;
+
+			float p_x = x + rot_x * scale;
+			float p_y = y + rot_y * scale;
+
+			C2D_SpriteFromSheet(&spr, iconSheet, part->texture);
+			C2D_SpriteSetCenter(&spr, 0.5f, 0.5f);
+			C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
+
+			C2D_SpriteSetPos(&spr, p_x, p_y);
+			C2D_SpriteSetScale(&spr, sx, sy);
+			C2D_SpriteSetRotation(&spr, rad);
+
+			C2D_DrawSpriteTinted(&spr, &tints[real_index]);
+		}
 	}
 }

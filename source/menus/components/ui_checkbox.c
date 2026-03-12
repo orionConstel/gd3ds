@@ -92,12 +92,10 @@ static void ui_checkbox_update(UIElement* e, UIInput* touch) {
 static void ui_checkbox_draw(UIElement* e) {
     float scale = e->checkbox.hoverScale;
 
-    float even_sx = closest_even_mult(e->checkbox.image.sprite.image.subtex->width, scale * e->checkbox.scaleX);
-    float even_sy = closest_even_mult(e->checkbox.image.sprite.image.subtex->height, scale * e->checkbox.scaleY);
 
     C2D_SpriteSetCenter(&e->checkbox.image.sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&e->checkbox.image.sprite, e->x, e->y);
-    C2D_SpriteSetScale(&e->checkbox.image.sprite, even_sx, even_sy);
+    C2D_SpriteSetScale(&e->checkbox.image.sprite, scale * e->checkbox.scaleX, scale * e->checkbox.scaleY);
     C2D_DrawSprite(&e->checkbox.image.sprite);
 }
 

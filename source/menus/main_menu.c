@@ -35,6 +35,11 @@ void action_open_level_select(UIElement* e) {
     set_fade_status(FADE_STATUS_OUT);
 }
 
+void action_open_icon_kit(UIElement* e) {
+    new_state = STATE_ICON_KIT;
+    set_fade_status(FADE_STATUS_OUT);
+}
+
 void action_open_settings(UIElement* e) {
     in_settings = true;
     settings_init();
@@ -43,6 +48,7 @@ void action_open_settings(UIElement* e) {
 static UIAction actions[] = {
     { "level_select", action_open_level_select },
     { "settings", action_open_settings },
+    { "icon_kit", action_open_icon_kit },
 };
 
 static UIAction actions_top[] = {

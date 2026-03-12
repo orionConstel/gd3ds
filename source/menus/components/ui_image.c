@@ -40,14 +40,11 @@ void ui_image_set_image(UIElement *e, int sprite_index, int sheet) {
     C2D_SpriteFromSheet(&e->image.sprite, *get_sheet(sheet), sprite_index);
     C3D_TexSetFilter(e->image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
 
-    float even_sx = closest_even_mult(e->image.sprite.image.subtex->width, e->image.scaleX);
-    float even_sy = closest_even_mult(e->image.sprite.image.subtex->height, e->image.scaleY);
+    e->w = e->image.sprite.image.subtex->width * e->image.scaleX;
+    e->h = e->image.sprite.image.subtex->height * e->image.scaleY;
 
-    e->w = e->image.sprite.image.subtex->width * even_sx;
-    e->h = e->image.sprite.image.subtex->height * even_sy;
-
-    e->image.scaleX = even_sx;
-    e->image.scaleY = even_sy;
+    e->image.scaleX = e->image.scaleX;
+    e->image.scaleY = e->image.scaleY;
 }
 
 UIElement ui_create_image(int x, int y, int sprite_index, int sheet, float sx, float sy, char (*tag)[TAG_LENGTH]) {

@@ -68,12 +68,9 @@ static void ui_button_update(UIElement* e, UIInput* touch) {
 static void ui_button_draw(UIElement* e) {
     float scale = e->button.hoverScale;
 
-    float even_sx = closest_even_mult(e->button.image.sprite.image.subtex->width, scale * e->button.scaleX);
-    float even_sy = closest_even_mult(e->button.image.sprite.image.subtex->height, scale * e->button.scaleY);
-
     C2D_SpriteSetCenter(&e->button.image.sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&e->button.image.sprite, e->x, e->y);
-    C2D_SpriteSetScale(&e->button.image.sprite, even_sx, even_sy);
+    C2D_SpriteSetScale(&e->button.image.sprite, scale * e->button.scaleX, scale * e->button.scaleY);
     C2D_DrawSprite(&e->button.image.sprite);
 
     // Get text length in pixels
@@ -88,6 +85,16 @@ static void ui_button_draw(UIElement* e) {
     }
 
     draw_text(bigFont_fontCharset, bigFont_sheet, e->x, e->y, txt_scale, 0.5f, "%s", e->button.text);
+}
+
+void ui_button_set_image(UIElement *e, int sprite_index, int sheet) {
+    if (e->type != UI_BUTTON) return;
+
+    C2D_SpriteFromSheet(&e->button.image.sprite, *get_sheet(sheet), sprite_index);
+    C3D_TexSetFilter(e->button.image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
+
+    e->w = fabsf(e->button.image.sprite.image.subtex->width * e->button.scaleX);
+    e->h = fabsf(e->button.image.sprite.image.subtex->height * e->button.scaleY);
 }
 
 UIElement ui_create_button(
@@ -112,15 +119,12 @@ UIElement ui_create_button(
     // Copy text
     strncpy(e.button.text, text, 63);
 
-    C2D_SpriteFromSheet(&e.button.image.sprite, *get_sheet(sheet), sprite_index);
-    C3D_TexSetFilter(e.button.image.sprite.image.tex, GPU_LINEAR, GPU_LINEAR);
-    
-    e.button.hoverScale = 1.f;
-    e.w = fabsf(e.button.image.sprite.image.subtex->width  * sx);
-    e.h = fabsf(e.button.image.sprite.image.subtex->height * sy);
-
     e.button.scaleX = sx;
     e.button.scaleY = sy;
+
+    ui_button_set_image(&e, sprite_index, sheet);
+    
+    e.button.hoverScale = 1.f;
 
     return e;
 }

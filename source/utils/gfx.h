@@ -4,18 +4,6 @@
 
 #include <math.h>
 
-// To get around the gpu weirdness
-inline float closest_even_mult(float value, float mult)
-{
-    float r = value * mult;
-    int n = (int)roundf(r);
-
-    if (n & 1)
-        n += (r > n) ? 1 : -1;
-
-    return (float)n / value;
-}
-
 #define FADE_DURATION 0.25f
 #define FADE_SPEED (255 / FADE_DURATION)
 

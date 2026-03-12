@@ -31,19 +31,18 @@ float scrolled = 0;
 
 float anim_time = 0;
 
-UIElement *bg_gradient = NULL;
-UIElement *bg_gradient_top = NULL;
-UIElement *level_card_window = NULL;
+static UIElement *bg_gradient = NULL;
+static UIElement *bg_gradient_top = NULL;
+static UIElement *level_card_window = NULL;
 
-UIElement *level_card_title = NULL;
-UIElement *level_card_stars = NULL;
-UIElement *level_card_face = NULL;
+static UIElement *level_card_title = NULL;
+static UIElement *level_card_stars = NULL;
+static UIElement *level_card_face = NULL;
 
-UIElement *level_card_2_window = NULL;
+static UIElement *level_card_2_window = NULL;
 
-UIElement *level_card_2_title = NULL;
-UIElement *level_card_2_stars = NULL;
-UIElement *level_card_2_face = NULL;
+static UIElement *level_card_2_title = NULL;
+static UIElement *level_card_2_stars = NULL;
 
 #define ANIM_DURATION 0.8f
 #define COLOR_FADE_DURATION 0.1f

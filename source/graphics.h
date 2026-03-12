@@ -70,6 +70,7 @@ typedef struct {
     C2D_Sprite *child_templates;
 } SpriteTemplate;
 
+
 void cache_all_sprites();
 void free_cached_sprites();
 
@@ -81,9 +82,22 @@ extern C2D_SpriteSheet spriteSheet2;
 extern C2D_SpriteSheet glowSheet;
 extern C2D_SpriteSheet bgSheet;
 extern C2D_SpriteSheet groundSheet;
+extern C2D_SpriteSheet iconSheet;
 
 extern SpriteTemplate sprite_templates[GAME_OBJECT_COUNT];
 
 void draw_objects();
 void draw_background(float x, float y);
 void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_width);
+void init_player_colors();
+void spawn_icon_at(
+	int gamemode,
+    int id,
+	bool glow,
+    float x,
+    float y,
+	float deg,
+	unsigned char flip_x,
+	unsigned char flip_y,
+	float scale
+);

@@ -12,6 +12,7 @@
 enum GameState {
     STATE_MAIN_MENU,
     STATE_LEVEL_SELECT,
+    STATE_ICON_KIT,
     STATE_GAME,
     STATE_EXIT
 };

@@ -9,6 +9,7 @@
 
 Color p1_color;
 Color p2_color;
+Color glow_color;
 
 ColorChannel channels[COL_CHANNEL_NUM];
 
@@ -30,14 +31,6 @@ int convert_one_point_nine_channel(int channel) {
 }
 
 void init_col_channels() {
-    p1_color.r = 0;
-    p1_color.g = 255;
-    p1_color.b = 0;
-
-    p2_color.r = 0;
-    p2_color.g = 255;
-    p2_color.b = 255;
-    
     channels[0].color.r = 0;
     channels[0].color.g = 0;
     channels[0].color.b = 0;

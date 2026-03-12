@@ -21,6 +21,7 @@
 
 #include "menus/main_menu.h"
 #include "menus/level_select.h"
+#include "menus/icon_kit.h"
 #include "menus/components/ui_screen.h"
 
 #define CITRA_TYPE 0x20000
@@ -193,6 +194,9 @@ void game_assets_init() {
 	
 	glowSheet = C2D_SpriteSheetLoad("romfs:/gfx/glow.t3x");
 	if (!glowSheet) svcBreak(USERBREAK_PANIC);
+	
+	iconSheet = C2D_SpriteSheetLoad("romfs:/gfx/icons.t3x");
+	if (!iconSheet) svcBreak(USERBREAK_PANIC);
 }
 
 
@@ -217,6 +221,7 @@ int main(int argc, char* argv[]) {
 	game_assets_init();
 
 	cache_all_sprites();
+	init_player_colors();
 
 	srand(time(NULL));
 
@@ -231,6 +236,9 @@ int main(int argc, char* argv[]) {
 				break;
 			case STATE_LEVEL_SELECT:
 				level_select_loop();
+				break;
+			case STATE_ICON_KIT:
+				icon_kit_loop();
 				break;
 			case STATE_GAME:
 				game_loop();
@@ -248,6 +256,7 @@ int main(int argc, char* argv[]) {
 	C2D_SpriteSheetFree(spriteSheet2);
 	C2D_SpriteSheetFree(glowSheet);
 	C2D_SpriteSheetFree(bgSheet);
+	C2D_SpriteSheetFree(iconSheet);
 	C2D_SpriteSheetFree(ui_sheet);
 	C2D_SpriteSheetFree(ui_2_sheet);
 	C2D_SpriteSheetFree(groundSheet);
