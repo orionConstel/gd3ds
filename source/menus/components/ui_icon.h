@@ -1,9 +1,10 @@
 #pragma once
 #include "ui_element.h"
+#include "ui_button.h"
 
 
-#define BUTTON_HOVER_SCALE 1.25f
-#define BUTTON_HOVER_ANIM_TIME 0.4f
+#define ICON_HOVER_SCALE BUTTON_HOVER_SCALE
+#define ICON_HOVER_ANIM_TIME BUTTON_HOVER_ANIM_TIME
 
 void ui_icon_set_gamemode_index(UIElement *e, int gamemode, int index);
 UIElement ui_create_icon(

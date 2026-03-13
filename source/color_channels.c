@@ -70,10 +70,10 @@ void init_col_channels() {
     channels[CHANNEL_3DL].color.g = 255;
     channels[CHANNEL_3DL].color.b = 255;
     
-    channels[CHANNEL_P1].color = p1_color;
+	channels[CHANNEL_P1].color = get_white_if_black(p1_color);
     channels[CHANNEL_P1].blending = true;
         
-    channels[CHANNEL_P2].color = p2_color;
+    channels[CHANNEL_P2].color = get_white_if_black(p2_color);
     channels[CHANNEL_P2].blending = true;
     
     channels[CHANNEL_LBG].color.r = 255;
@@ -123,13 +123,9 @@ void upload_to_buffer(int obj, int channel) {
     ColTriggerBuffer *buffer = &col_trigger_buffer[channel];
     buffer->old_color = channels[channel].color;
     if (objects.p1_color[obj]) {
-        buffer->new_color.r = p1_color.r;
-        buffer->new_color.g = p1_color.g;
-        buffer->new_color.b = p1_color.b;
+        buffer->new_color = get_white_if_black(p1_color);
     } else if (objects.p2_color[obj]) {
-        buffer->new_color.r = p2_color.r;
-        buffer->new_color.g = p2_color.g;
-        buffer->new_color.b = p2_color.b;
+        buffer->new_color = get_white_if_black(p2_color);
     } else {
         buffer->new_color.r = objects.trig_colorR[obj];
         buffer->new_color.g = objects.trig_colorG[obj];
@@ -320,9 +316,10 @@ void calculate_lbg() {
     float factor = (channel.color.r + channel.color.g + channel.color.b) / 150.f;
 
     if (factor < 1.f) {
-        r = r * factor + p1_color.r * (1 - factor);
-        g = g * factor + p1_color.g * (1 - factor);
-        b = b * factor + p1_color.b * (1 - factor);
+        Color p1 = get_white_if_black(p1_color);
+        r = r * factor + p1.r * (1 - factor);
+        g = g * factor + p1.g * (1 - factor);
+        b = b * factor + p1.b * (1 - factor);
     }
 
     // Set here lerped LBG

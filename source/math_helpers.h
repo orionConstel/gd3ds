@@ -3,6 +3,12 @@
 #include "color_channels.h"
 
 #define RGBA8(r, g, b, a) (a | (b << (u32)8) | (g << (u32)16) | (r << (u32)24))
+#define ABGR8(r, g, b, a) (r | (g << (u32)8) | (b << (u32)16) | (a << (u32)24))
+
+#define R_ABGR8(color) (color & 0xff)
+#define G_ABGR8(color) ((color >> 8) & 0xff)
+#define B_ABGR8(color) ((color >> 16) & 0xff)
+
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 #define MAX(a,b) (((a)>(b))?(a):(b))

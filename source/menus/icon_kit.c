@@ -18,6 +18,8 @@
 #include "icon_kit.h"
 #include "level/main_levels.h"
 
+#include "palette_kit.h"
+
 #include "save/config.h"
 
 static UIScreen screen_top;
@@ -50,6 +52,8 @@ int selected_p1 = 0;
 int selected_p2 = 0;
 int selected_glow = 0;
 
+bool player_glow_enabled = false;
+
 static const int gamemode_icon_count[GAMEMODE_COUNT] = {
 	ICON_COUNT_PLAYER,
 	ICON_COUNT_SHIP,
@@ -74,6 +78,12 @@ int *current_icons[GAMEMODE_COUNT] = {
 	&selected_wave
 };
 
+int *current_colors[3] = {
+	&selected_p1,
+	&selected_p2,
+	&selected_glow
+};
+
 
 static const int button_images[5] = {
 	341,
@@ -83,6 +93,8 @@ static const int button_images[5] = {
 	329
 };
 static int icon_counter = 1;
+
+static bool in_palette_kit = false;
 
 static void set_icon_index(UIElement *e) {
 	int new_index = (*current_pages[gamemode_page] * ICONS_PER_PAGE) + icon_counter;
@@ -168,6 +180,11 @@ static void action_icon_selected(UIElement *e) {
 	ui_run_func_on_tag(&screen, "icon", set_icon_index); 
 }
 
+static void action_open_palette_kit(UIElement* e) {
+    in_palette_kit = true;
+    palette_kit_init();
+}
+
 static UIAction actions[] = {
     {"exit", action_exit},
 	{"action_cube", set_cube_page },
@@ -177,7 +194,8 @@ static UIAction actions[] = {
 	{"action_dart", set_wave_page },
 	{"icons_left", move_index_left },
 	{"icons_right", move_index_right },
-	{"icon_selected", action_icon_selected }
+	{"icon_selected", action_icon_selected },
+	{"palette", action_open_palette_kit }
 };
 
 static UIAction actions_top[] = {
@@ -212,7 +230,7 @@ void icon_kit_loop() {
 		hidScanInput();
 		u32 kDown = hidKeysDown();
 
-		if (kDown & KEY_B) {
+		if ((kDown & KEY_B) && !in_palette_kit) {
 			action_exit(NULL);
 		}
 
@@ -223,7 +241,7 @@ void icon_kit_loop() {
 		touch.did_something = false;
 		touch.interacted = false;
 
-		ui_screen_update(&screen, &touch);
+		if (!in_palette_kit) ui_screen_update(&screen, &touch);
 		ui_screen_update(&screen_top, &touch);
 		do {
 			C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -235,6 +253,12 @@ void icon_kit_loop() {
 			draw_fade();
 
 			ui_screen_draw(&screen);
+			if (in_palette_kit) {
+                int returned = palette_kit_loop();
+                if (returned) {
+                    in_palette_kit = false;
+                }
+            }
 
 			// Top screen
 			C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
@@ -242,7 +266,7 @@ void icon_kit_loop() {
 
 			ui_screen_draw(&screen_top);
 			spawn_icon_at(
-				gamemode_page, *current_icons[gamemode_page], false, 200, 120, 0, 0, 0, 2.f,
+				gamemode_page, *current_icons[gamemode_page], player_glow_enabled, 200, 120, 0, 0, 0, 2.f,
 				C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255),
 				C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255),
 				C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)

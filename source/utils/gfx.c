@@ -79,6 +79,7 @@ void draw_9_slice(const C2D_Image atlas, const float x, const float y, const int
     sub = TILE(0,0);
     img = atlas; img.subtex = &sub;
     C2D_SpriteFromImage(&spr, img);
+    C3D_TexSetFilter(spr.image.tex, GPU_LINEAR, GPU_LINEAR);
     C2D_SpriteSetCenter(&spr, 0.5f, 0.5f);
     C2D_SpriteSetPos(&spr, cx - halfW + b*0.5f, cy - halfH + b*0.5f);
     C2D_DrawSpriteTinted(&spr, &tint);

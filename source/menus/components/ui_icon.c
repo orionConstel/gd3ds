@@ -3,7 +3,7 @@
 #include "ui_image.h"
 #include "text.h"
 #include "fonts/bigFont.h"
-#include "ui_button.h"
+#include "ui_icon.h"
 #include "easing.h"
 #include "math_helpers.h"
 #include "ui_screen.h"
@@ -42,8 +42,8 @@ static void ui_icon_update(UIElement* e, UIInput* touch) {
         bounce_type = BOUNCE_IN;
     }
 
-    e->icon.hoverTimer = clampf(e->icon.hoverTimer, 0.f, BUTTON_HOVER_ANIM_TIME);
-    e->icon.hoverScale = easeValue(bounce_type, 1.0f, BUTTON_HOVER_SCALE, e->icon.hoverTimer, BUTTON_HOVER_ANIM_TIME, 0);
+    e->icon.hoverTimer = clampf(e->icon.hoverTimer, 0.f, ICON_HOVER_ANIM_TIME);
+    e->icon.hoverScale = easeValue(bounce_type, 1.0f, ICON_HOVER_SCALE, e->icon.hoverTimer, ICON_HOVER_ANIM_TIME, 0);
 
 
     // If released on icon, do its action
@@ -71,11 +71,14 @@ static void ui_icon_update(UIElement* e, UIInput* touch) {
 static void ui_icon_draw(UIElement* e) {
     float scale = e->icon.hoverScale;
 
+    float y = e->y;
+    if (e->icon.gamemode == GAMEMODE_SHIP) y -= 4;
+
     spawn_icon_at(
         e->icon.gamemode,
         e->icon.index,
         false,
-        e->x, e->y,
+        e->x, y,
         0,
         0,
         0,

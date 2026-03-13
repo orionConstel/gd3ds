@@ -221,7 +221,7 @@ int main(int argc, char* argv[]) {
 	game_assets_init();
 
 	cache_all_sprites();
-	init_player_colors();
+	update_player_colors();
 
 	srand(time(NULL));
 

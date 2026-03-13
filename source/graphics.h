@@ -1,6 +1,7 @@
 #pragma once
 #include <citro2d.h>
 #include "level_loading.h"
+#include "color_channels.h"
 
 #define FADING_OBJ_PADDING 90
 #define FADING_OBJ_WIDTH 180
@@ -70,7 +71,6 @@ typedef struct {
     C2D_Sprite *child_templates;
 } SpriteTemplate;
 
-
 void cache_all_sprites();
 void free_cached_sprites();
 
@@ -86,10 +86,14 @@ extern C2D_SpriteSheet iconSheet;
 
 extern SpriteTemplate sprite_templates[GAME_OBJECT_COUNT];
 
+extern const Color white;
+
+Color get_white_if_black(Color color);
 void draw_objects();
 void draw_background(float x, float y);
 void draw_ground(float cam_x, float cam_y, float y, bool is_ceiling, int screen_width);
-void init_player_colors();
+void update_player_colors();
+void set_player_colors(Color p1, Color p2, Color glow);
 void spawn_icon_at(
 	int gamemode,
     int id,

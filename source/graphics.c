@@ -6,6 +6,10 @@
 #include <stdlib.h>
 #include "mp3_player.h"
 #include "icons.h"
+#include "menus/icon_kit.h"
+#include "menus/palette_kit.h"
+
+const Color white = { 255, 255, 255 };
 
 bool aaEnabled = false;
 bool wideEnabled = false;
@@ -41,18 +45,34 @@ static C2D_SpriteSheet *get_sprite_sheet(int index, int *rel_index) {
 	return &spriteSheet2;
 }
 
-void init_player_colors() {
-	p1_color.r = 0;
-    p1_color.g = 255;
-    p1_color.b = 0;
+Color get_color_abgr8(u32 color) {
+	Color col;
+	col.r = R_ABGR8(color);
+	col.g = G_ABGR8(color);
+	col.b = B_ABGR8(color);
 
-    p2_color.r = 0;
-    p2_color.g = 255;
-    p2_color.b = 255;
-    
-    glow_color.r = 0;
-    glow_color.g = 255;
-    glow_color.b = 255;
+	return col;
+}
+
+void update_player_colors() {
+	Color p1 = get_color_abgr8(colors[selected_p1]);
+	Color p2 = get_color_abgr8(colors[selected_p2]);
+	Color glow = get_color_abgr8(colors[selected_glow]);
+
+
+	set_player_colors(p1, p2, glow);
+}
+
+Color get_white_if_black(Color color) {
+	if (color.r == 0 && color.g == 0 && color.b == 0) return white;
+	
+	return color;
+}
+
+void set_player_colors(Color p1, Color p2, Color glow) {
+	p1_color = p1;
+	p2_color = p2;
+	glow_color = glow;
 }
 
 void cache_all_sprites() {
@@ -961,7 +981,7 @@ void spawn_icon_at(
 	C2D_PlainImageTint(&tints[1], p2_color, 1.0f);
 	C2D_PlainImageTint(&tints[icon.part_count - 1], glow_color, 1.0f);
 
-	for (size_t i = 0; i < count - glow; i++) {
+	for (size_t i = 0; i < count; i++) {
 		size_t real_index = i;
 		// Swap p1 and p2 layers
 		if (i==0) real_index = 1;

@@ -12,6 +12,8 @@
 #include "ui_action_area.h"
 #include "ui_darken.h"
 #include "ui_icon.h"
+#include "ui_color_button.h"
+#include "ui_window_button.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -277,7 +279,7 @@ void ui_load_screen(UIScreen* screen,
         int limit = 16;
         float opacity = 1.0f;
 
-        int index = 1, gamemode = 0;
+        int index = 1, color_index = 0, gamemode = 0;
 
         // Some strings
         char actionName[64] = {0};
@@ -351,6 +353,8 @@ void ui_load_screen(UIScreen* screen,
                 index = atoi(value);
             } else if (strcmp(key, "gamemode") == 0) {
                 gamemode = atoi(value);
+            } else if (strcmp(key, "color_index") == 0) {
+                color_index = atoi(value);
             }
         }
 
@@ -420,6 +424,21 @@ void ui_load_screen(UIScreen* screen,
                 ui_create_icon(
                     x, y, scale, index, gamemode,
                     ui_find_action(actions, actionCount, actionName),
+                    tag
+                );
+        } else if (strcmp(type, "colorbutton") == 0) {
+            screen->elements[screen->count++] =
+                ui_create_color_button(
+                    x, y, scale, index, color_index,
+                    ui_find_action(actions, actionCount, actionName),
+                    tag
+                );
+        } else if (strcmp(type, "windowbutton") == 0) {
+            screen->elements[screen->count++] =
+                ui_create_window_button(
+                    x, y, w, h, style,
+                    ui_find_action(actions, actionCount, actionName),
+                    text,
                     tag
                 );
         }

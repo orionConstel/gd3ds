@@ -18,6 +18,8 @@ typedef enum {
     UI_ACTION_AREA,
     UI_DARKEN,
     UI_ICON,
+    UI_COLOR_BUTTON,
+    UI_WINDOW_BUTTON,
 } UIElementType;
 
 typedef struct {
@@ -108,9 +110,41 @@ typedef struct {
     float scaleY;
 
     bool isSelected;
+} UIIconData;
+
+typedef struct {
+    int index;
+    int color_index;
+
+    UIImageData image;
+    UIImageData button;
+
+    bool hovered;
+    bool pressed;
+    
+    float hoverTimer;
+    float hoverScale;
+
+    float scaleX;
+    float scaleY;
+
+    bool isSelected;
+} UIColorData;
+
+typedef struct {
+    UIWindowData window;
+
+    bool hovered;
+    bool pressed;
+    
+    float hoverTimer;
+    float hoverScale;
+
+    float scaleX;
+    float scaleY;
 
     char text[64];
-} UIIconData;
+} UIWindowButtonData;
 
 typedef struct {
     C2D_Sprite sprite;
@@ -156,6 +190,8 @@ struct UIElement {
         UIActionAreaData action_area;
         UIDarken darken;
         UIIconData icon;
+        UIColorData color;
+        UIWindowButtonData window_button;
     };
 
     char tag[TAGS_PER_ELEMENT][TAG_LENGTH];

@@ -1,7 +1,7 @@
 #pragma once
 #include "ui_element.h"
 
-#define UI_MAX_ELEMENTS 64
+#define UI_MAX_ELEMENTS 128
 
 typedef struct {
     UIElement elements[UI_MAX_ELEMENTS];
