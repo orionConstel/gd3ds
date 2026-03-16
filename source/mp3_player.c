@@ -261,13 +261,9 @@ int play_mp3(char *path, bool loop) {
 }
 
 void seek(u32 location) {
-    LightLock_Lock(&decoderLock);
-
     if (location <= mpg123_length(mh)) {
         mpg123_seek(mh, location, SEEK_SET);
     }
-
-    LightLock_Unlock(&decoderLock);
 }
 
 // Set position in seconds
@@ -277,8 +273,26 @@ void seek_mp3(float time) {
     int location = time * samplerate_mp3();
     if (!quit) {
         bool oldstate = ndspChnIsPaused(MUSIC_CHANNEL);
+        
         ndspChnSetPaused(MUSIC_CHANNEL, true); //Pause playback...
+        
+        LightLock_Lock(&decoderLock);
+        // Flush old audio
+        ndspChnReset(MUSIC_CHANNEL);
+        ndspSetOutputMode(NDSP_OUTPUT_STEREO);
+        ndspChnSetInterp(MUSIC_CHANNEL, NDSP_INTERP_POLYPHASE);
+        ndspChnSetRate(MUSIC_CHANNEL, samplerate_mp3());
+        ndspChnSetFormat(MUSIC_CHANNEL, channels_mp3() == 2 ? NDSP_FORMAT_STEREO_PCM16 : NDSP_FORMAT_MONO_PCM16);
+        ndspSetCallback(audioCallback, NULL);
+
         seek(location);
+
+        for (int i = 0; i < NUM_BUFS; i++) {
+            memset(&waveBuf[i], 0, sizeof(ndspWaveBuf));
+            waveBuf[i].data_vaddr = audioBuffer + i * buffsize_mp3() * channels_mp3();
+        }
+
+        LightLock_Unlock(&decoderLock);
         ndspChnSetPaused(MUSIC_CHANNEL, oldstate); //once the seeking is done, playback can continue.
     }
 }

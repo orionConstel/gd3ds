@@ -3,6 +3,7 @@
 #include "main.h"
 #include "math_helpers.h"
 #include "player/slope.h"
+#include "mp3_player.h"
 
 GameState state;
 
@@ -148,7 +149,7 @@ void init_variables() {
 
     //current_fading_effect = FADE_NONE;
     //p1_trail = FALSE;
-    //death_timer = 0.f;
+    state.death_timer = 0.f;
 
     //level_info.completing = FALSE;
     
@@ -209,11 +210,13 @@ void init_variables() {
     //    state.dual_portal_y = 0.f;
     //    setup_dual();
     //}
+    run_camera();
 
     // Set camera vertical pos
     state.camera_y = state.camera_intended_y;
     state.camera_y_lerp = state.camera_y;
     state.intermediate_camera_y = state.camera_y;
+
     
     float playable_height = state.ceiling_y - state.ground_y;
     float calc_height = 0;
@@ -222,6 +225,10 @@ void init_variables() {
         calc_height = (SCREEN_HEIGHT_AREA - playable_height) / 2;
     }
 
-    state.ground_y_gfx = calc_height;
-    
+    state.ground_y_gfx = calc_height;   
+}
+
+void handle_death() {
+    toggle_playback_mp3();
+    seek_mp3(0);
 }

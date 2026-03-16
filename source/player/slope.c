@@ -39,17 +39,17 @@ int grav_slope_orient(int obj, Player *player) {
     }
     return orient;
 }
-/*
-bool is_spike_slope(GameObject *obj) {
-    switch (*soa_id(obj)) {
-        case GROUND_SPIKE_SLOPE_45:
-        case GROUND_SPIKE_SLOPE_22_66:
-        case WAVY_GROUND_SPIKE_SLOPE_45:
-        case WAVY_GROUND_SPIKE_SLOPE_22_66:
-            return TRUE;
+
+bool is_spike_slope(int obj) {
+    switch (objects.id[obj]) {
+        case 363:
+        case 364:
+        case 366:
+        case 367:
+            return true;
     }
-    return FALSE;
-}*/
+    return false;
+}
 
 float slope_angle(int obj, Player *player) {
     float angle = atanf((float) objects.height[obj] / objects.width[obj]);
@@ -84,12 +84,21 @@ float expected_slope_y(int obj, Player *player) {
     float ydist = mult * player->height * sqrtf(powf(tanf(angle), 2) + 1) / 2;
     float pos_relative = ((float) objects.height[obj] / objects.width[obj]) * (player->x - obj_getLeft(obj));
 
+    float y;
     // Get correct slope y depending on combination of player gravity and slope orientation
     if ((angle > 0) ^ player->upside_down ^ flipping) {
-        return obj_getBottom(obj) + MIN(pos_relative + ydist, objects.height[obj] + player->height / 2);
+        y = obj_getBottom(obj) + MIN(pos_relative + ydist, objects.height[obj] + player->height / 2);
     } else {
-        return obj_getTop(obj) - MAX(pos_relative - ydist, -player->height / 2);
+        y = obj_getTop(obj) - MAX(pos_relative - ydist, -player->height / 2);
     }
+
+    // Spike slope has bigger hitbox
+    if (is_spike_slope(obj)) {
+        y += (objects.orientation[obj] >= ORIENT_UD_DOWN ? -4 : 4);
+    }
+
+    return y;
+
 }
 
 void slope_snap_y(int obj, Player *player) {
@@ -509,11 +518,11 @@ void slope_collide(int obj, Player *player) {
             player->slope_data.slope_id = obj;
             slope_snap_y(obj, player);
             snap_player_to_slope(obj, player);
-/*
+
             if (is_spike_slope(obj)) {
                 state.dead = true;
             }
-*/
+
             // If player is on an slope that goes down, and is in the top corner, snap down
             if (snapDown && !hasSlope) {
                 if (orient == ORIENT_NORMAL_DOWN && player->vel_y <= 0) {

@@ -71,6 +71,7 @@ typedef struct {
     float level_progress;
 
     float timer;
+    float death_timer;
     /*
     Particle particles[MAX_PARTICLES];
 
@@ -87,3 +88,5 @@ void set_gamemode(Player *player, int gamemode);
 void set_mini(Player *player, bool mini);
 void init_variables();
 void run_camera();
+
+void handle_death();

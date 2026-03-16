@@ -34,6 +34,8 @@ int convert_one_point_nine_channel(int channel) {
 }
 
 void init_col_channels() {
+    memset(col_trigger_buffer, 0, sizeof(col_trigger_buffer));
+
     channels[0].color.r = 0;
     channels[0].color.g = 0;
     channels[0].color.b = 0;

@@ -165,11 +165,11 @@ const ObjectHitbox hitbox_84[] = {
 };
 
 const ObjectHitbox hitbox_88[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.30, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_89[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 21.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_90[] = {
@@ -201,7 +201,7 @@ const ObjectHitbox hitbox_96[] = {
 };
 
 const ObjectHitbox hitbox_98[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_99[] = {
@@ -353,27 +353,27 @@ const ObjectHitbox hitbox_179[] = {
 };
 
 const ObjectHitbox hitbox_183[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 15.48, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_184[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 20.40, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_185[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 3.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_186[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.30, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_187[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 21.96, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_188[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_192[] = {
@@ -741,15 +741,15 @@ const ObjectHitbox hitbox_392[] = {
 };
 
 const ObjectHitbox hitbox_397[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 28.90, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_398[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 17.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_399[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.90, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_421[] = {
@@ -865,27 +865,27 @@ const ObjectHitbox hitbox_674[] = {
 };
 
 const ObjectHitbox hitbox_675[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_676[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 17.68, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_677[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.48, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_678[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 30.40, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_679[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 18.72, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_680[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 10.80, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_709[] = {
@@ -925,15 +925,15 @@ const ObjectHitbox hitbox_729[] = {
 };
 
 const ObjectHitbox hitbox_740[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.30, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_741[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 21.96, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_742[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_745[] = {
@@ -1133,11 +1133,11 @@ const ObjectHitbox hitbox_1569[] = {
 };
 
 const ObjectHitbox hitbox_1582[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 4.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1583[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 4.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1594[] = {
@@ -1145,23 +1145,23 @@ const ObjectHitbox hitbox_1594[] = {
 };
 
 const ObjectHitbox hitbox_1619[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 25.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1620[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 15.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1701[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 6.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1702[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 6.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1703[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 6.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1704[] = {
@@ -1169,27 +1169,27 @@ const ObjectHitbox hitbox_1704[] = {
 };
 
 const ObjectHitbox hitbox_1705[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.30, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1706[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 21.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1707[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1708[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 28.90, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1709[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 17.60, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1710[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.90, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1711[] = {
@@ -1285,15 +1285,15 @@ const ObjectHitbox hitbox_1733[] = {
 };
 
 const ObjectHitbox hitbox_1734[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 32.00, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1735[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 17.68, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1736[] = {
-    { HITBOX_HAZARD, 0.00, 0.00, 0.00, 0.00, COLLISION_CIRCLE }
+    { HITBOX_HAZARD, 0.00, 0.00, 12.48, 0.00, COLLISION_CIRCLE }
 };
 
 const ObjectHitbox hitbox_1743[] = {

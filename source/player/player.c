@@ -401,7 +401,13 @@ void handle_player(Player *player) {
 
     collide_with_objects(player);
     
+    if (state.noclip) state.dead = false;
+    
+    if (state.dead) return;
+
     run_player(player);
+    
+    if (state.noclip) state.dead = false;
     
     player->delta_y = player->y - state.old_player.y;
 
@@ -433,7 +439,7 @@ void draw_player(Player *player) {
     float cos_r = cosf(rad);
     float sin_r = sinf(rad);
 
-    int flip_x_mult = (state.mirror_mult);
+    //int flip_x_mult = (state.mirror_mult);
     int flip_y_mult = (player->upside_down ? -1 : 1);
 
     float m00 = cos_r;

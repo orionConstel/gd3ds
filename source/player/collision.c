@@ -427,7 +427,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             }
             break;
     }
-    if (GET_COLLIDED(obj)) SET_HITBOX_COUNTER(obj, GET_HITBOX_COUNTER(obj) + 1); 
+    if (!GET_COLLIDED(obj)) SET_HITBOX_COUNTER(obj, GET_HITBOX_COUNTER(obj) + 1); 
 }
 
 void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]) {
@@ -567,7 +567,6 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
 
             clip += fabsf(player->vel_y) * STEPS_DT;
             
-            float bottom = gravBottom(player);
             if (player->slope_data.slope_id >= 0) {
                 return;
             }
@@ -585,7 +584,9 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                     objects.x[obj], objects.y[obj], hitbox->width, hitbox->height, objects.rotation[obj]
                 );
 
-                gravSnap = (!state.old_player.on_ground || player->ceiling_inv_time > 0) && internalCollidingBlock && obj_gravTop(player, obj) - gravInternalBottom(player) <= clip;
+                gravSnap = (!state.old_player.on_ground || player->ceiling_inv_time > 0) && internalCollidingBlock && obj_gravBottom(player, obj) - gravInternalBottom(player) <= clip;
+                
+                if (gravSnap) upload_color_to_buffer(CHANNEL_BG, C2D_Color32(255, 0, 0, 255), 0);
             }
             
             
@@ -635,6 +636,7 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                 if (player->gamemode != GAMEMODE_PLAYER || gravSnap) {
                     if (((gravTop(player) - obj_gravBottom(player, obj) <= clip && player->vel_y >= 0) || gravSnap) && !slope_condition) {
                         if (!gravSnap) player->on_ceiling = true;
+                        else player->vel_y = 0;
                         player->inverse_rotation = false;
                         player->time_since_ground = 0;
                         player->ceiling_inv_time = 0;

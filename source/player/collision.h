@@ -16,15 +16,30 @@ enum JumpType {
     JUMP_TYPES_COUNT
 };
 
-#define GET_ACTIVATED(obj) ((objects.activated[obj] >> state.current_player) & 1)
-#define SET_ACTIVATED(obj, val) (objects.activated[obj] |= (val << state.current_player))
+#define GET_ACTIVATED(obj) \
+    ((objects.activated[(obj)] >> state.current_player) & 1)
 
-#define GET_COLLIDED(obj) ((objects.collided[obj] >> state.current_player) & 1)
-#define SET_COLLIDED(obj, val) (objects.collided[obj] |= (val << state.current_player))
+#define SET_ACTIVATED(obj, val) \
+    (objects.activated[(obj)] = \
+        (objects.activated[(obj)] & ~(1 << state.current_player)) | \
+        (((val) & 1) << state.current_player))
 
-#define GET_HITBOX_COUNTER(obj) ((objects.hitbox_counter[obj] >> (state.current_player * 8)) & 0xff)
-#define SET_HITBOX_COUNTER(obj, val) (objects.hitbox_counter[obj] |= ((val) << (state.current_player * 8)))
+#define GET_COLLIDED(obj) \
+    ((objects.collided[(obj)] >> state.current_player) & 1)
 
+#define SET_COLLIDED(obj, val) \
+    (objects.collided[(obj)] = \
+        (objects.collided[(obj)] & ~(1 << state.current_player)) | \
+        (((val) & 1) << state.current_player))
+
+#define GET_HITBOX_COUNTER(obj) \
+    ((objects.hitbox_counter[(obj)] >> (state.current_player * 8)) & 0xff)
+
+#define SET_HITBOX_COUNTER(obj, val) \
+    (objects.hitbox_counter[(obj)] = \
+        (objects.hitbox_counter[(obj)] & ~(0xff << (state.current_player * 8))) | \
+        (((val) & 0xff) << (state.current_player * 8)))
+        
 #define YELLOW_PAD 35
 #define PINK_PAD 140
 #define BLUE_PAD 67

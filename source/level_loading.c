@@ -1011,6 +1011,8 @@ bool parse_string(const char *levelString) {
         return false;
     }
 
+    objects.count = objectCount;
+
     printf("Parsing string and converting objects...\n");
     printf("Aproximately %d bytes of pure objects\n", sizeof(ObjectsArray) * objectCount);
 
@@ -1075,21 +1077,24 @@ int load_level(char *path) {
     if (!level) return 1;
 
     char *data = decompress_level(level);
-    if (data) {
-        // Get level starting colors
-        char *metaStr = get_metadata_value(data, "kS38");
-        channelCount = parse_color_channels(metaStr, &colorChannels);
+    if (!data) return 2;
 
-        // Fallback to pre 2.0 color keys
-        if (!channelCount) {
-            channelCount = parse_old_channels(data, &colorChannels);
-        }
+    // Get level starting colors
+    char *metaStr = get_metadata_value(data, "kS38");
+    channelCount = parse_color_channels(metaStr, &colorChannels);
 
-        bool returned = parse_string(data);
-        free(data);
-        free(metaStr);
-        if (!returned) return 2;
+    // Fallback to pre 2.0 color keys
+    if (!channelCount) {
+        channelCount = parse_old_channels(data, &colorChannels);
     }
+
+    bool returned = parse_string(data);
+
+    free(data);
+    free(metaStr);
+
+    if (!returned) return 3;
+    
     free(level);
 
     init_col_channels();
@@ -1108,6 +1113,18 @@ int load_level(char *path) {
     C2D_SpriteSetCenter(&sprite_templates[17].child_templates[0], 0.5f, 0.5f);
 
     return 0;
+}
+
+void reload_level() {
+    for (int i = 0; i < objects.count; i++) {
+        objects.activated[i] = false;
+        objects.collided[i] = false;
+        objects.hitbox_counter[i] = 0;
+        objects.transition_applied[i] = FADE_NONE;
+    }
+
+    init_col_channels();
+    set_color_channels();
 }
 
 void unload_level() {

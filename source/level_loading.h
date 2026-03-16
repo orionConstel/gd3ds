@@ -22,6 +22,8 @@ typedef union {
 } GDValue;
 
 typedef struct {
+    int count;
+
     int *random;
 
     int *id;
@@ -77,8 +79,11 @@ extern ObjectsArray objects;
 
 char *read_file(const char *filepath, size_t *out_size);
 char *decompress_level(char *data);
+
 int load_level(char *path);
+void reload_level();
 void unload_level();
+
 Section *get_or_create_section(int x);
 bool obj_has_main(const GameObject *obj);
 bool obj_has_detail(const GameObject *obj);
