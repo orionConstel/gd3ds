@@ -316,13 +316,13 @@ void MotionTrail_Draw(MotionTrail* trail) {
         Vec2 p1 = trail->vertices[i1];
         Vec2 p2 = trail->vertices[i2];
 
-        float x0 = ((p0.x - state.camera_x));
+        float x0 = get_mirror_x((p0.x - state.camera_x), state.mirror_factor);
         float y0 = SCREEN_HEIGHT - ((p0.y - state.camera_y));
 
-        float x1 = ((p1.x - state.camera_x));
+        float x1 = get_mirror_x((p1.x - state.camera_x), state.mirror_factor);
         float y1 = SCREEN_HEIGHT - ((p1.y - state.camera_y));
 
-        float x2 = ((p2.x - state.camera_x));
+        float x2 = get_mirror_x((p2.x - state.camera_x), state.mirror_factor);
         float y2 = SCREEN_HEIGHT - ((p2.y - state.camera_y));
 
         u8* c0 = &trail->colorPointer[i0 * 4];
@@ -363,13 +363,13 @@ void MotionTrail_DrawWaveTrail(MotionTrail *trail) {
         Vec2 p1 = trail->vertices[i1];
         Vec2 p2 = trail->vertices[i2];
 
-        float x0 = ((p0.x - state.camera_x));
+        float x0 = get_mirror_x((p0.x - state.camera_x), state.mirror_factor);
         float y0 = SCREEN_HEIGHT - ((p0.y - state.camera_y));
 
-        float x1 = ((p1.x - state.camera_x));
+        float x1 = get_mirror_x((p1.x - state.camera_x), state.mirror_factor);
         float y1 = SCREEN_HEIGHT - ((p1.y - state.camera_y));
 
-        float x2 = ((p2.x - state.camera_x));
+        float x2 = get_mirror_x((p2.x - state.camera_x), state.mirror_factor);
         float y2 = SCREEN_HEIGHT - ((p2.y - state.camera_y));
 
         u8* c0 = &trail->colorPointer[i0 * 4];
@@ -394,13 +394,13 @@ void MotionTrail_DrawWaveTrail(MotionTrail *trail) {
         Vec2 p1 = trail->centerVertices[i1];
         Vec2 p2 = trail->centerVertices[i2];
 
-        float x0 = ((p0.x - state.camera_x));
+        float x0 = get_mirror_x((p0.x - state.camera_x), state.mirror_factor);
         float y0 = SCREEN_HEIGHT - ((p0.y - state.camera_y));
 
-        float x1 = ((p1.x - state.camera_x));
+        float x1 = get_mirror_x((p1.x - state.camera_x), state.mirror_factor);
         float y1 = SCREEN_HEIGHT - ((p1.y - state.camera_y));
 
-        float x2 = ((p2.x - state.camera_x));
+        float x2 = get_mirror_x((p2.x - state.camera_x), state.mirror_factor);
         float y2 = SCREEN_HEIGHT - ((p2.y - state.camera_y));
 
         C2D_DrawTriangle(

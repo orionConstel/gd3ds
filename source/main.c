@@ -181,6 +181,7 @@ void game_loop() {
                 trail = trail_p1;
                 wave_trail = wave_trail_p1;
                 handle_player(&state.player);
+                handle_mirror_transition();
                 trail_p1 = trail;
                 wave_trail_p1 = wave_trail;
 
@@ -235,17 +236,17 @@ void game_loop() {
             
             scale_view();
             
-            draw_background(state.camera_x / 8, -(state.camera_y / 8) + 200);
+            draw_background(state.background_x / 8, -(state.camera_y / 8) + 200);
 
             C2D_ViewScale(SCALE, SCALE);
 
             draw_objects();
 
-            draw_ground(state.camera_x, state.camera_y, 0, false, SCREEN_WIDTH);
+            draw_ground(state.ground_x, state.camera_y, 0, false, SCREEN_WIDTH);
             
             if (state.ground_y_gfx > 2) {
-                if (state.camera_y - CAMERA_Y_OFFSET + state.ground_y_gfx > 0) draw_ground(state.camera_x, state.camera_y, state.camera_y + state.ground_y_gfx - CAMERA_Y_OFFSET, false, SCREEN_WIDTH);
-                draw_ground(state.camera_x, state.camera_y, state.camera_y - CAMERA_Y_OFFSET + SCREEN_HEIGHT_AREA - state.ground_y_gfx, true, SCREEN_WIDTH);
+                if (state.camera_y - CAMERA_Y_OFFSET + state.ground_y_gfx > 0) draw_ground(state.ground_x, state.camera_y, state.camera_y + state.ground_y_gfx - CAMERA_Y_OFFSET, false, SCREEN_WIDTH);
+                draw_ground(state.ground_x, state.camera_y, state.camera_y - CAMERA_Y_OFFSET + SCREEN_HEIGHT_AREA - state.ground_y_gfx, true, SCREEN_WIDTH);
             }
             draw_fade();
             C2D_ViewScale(1/SCALE, 1/SCALE);

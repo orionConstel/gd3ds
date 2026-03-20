@@ -8,6 +8,7 @@
 #include <citro2d.h>
 #include "state.h"
 #include "math_helpers.h"
+#include "utils/gfx.h"
 
 static float randf() {
     return (float)rand() / RAND_MAX;
@@ -447,7 +448,7 @@ void drawParticleSystem(ParticleSystem* ps, bool isStationary, float x_offset, f
         float half = size * 0.5f;
 
         C2D_DrawRectSolid(
-            x - half + x_offset,
+            get_mirror_x(x, state.mirror_factor) - half + x_offset,
             y - half + y_offset,
             0.0f,
             size,

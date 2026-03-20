@@ -21,6 +21,9 @@ void run_camera() {
     }
     state.ground_y_gfx = ease_out(state.ground_y_gfx, calc_height, 0.02f);
 
+    state.ground_x += player->vel_x * STEPS_DT * state.mirror_speed_factor;
+    state.background_x += player->vel_x * STEPS_DT * state.mirror_speed_factor;
+
     /*
     if (level_info.wall_y == 0) {
         if (state.camera_x + WIDTH_ADJUST_AREA + SCREEN_WIDTH_AREA >= level_info.wall_x - (4.5f * 30.f)) {

@@ -13,6 +13,7 @@
 
 #include "main.h"
 
+#include "utils/gfx.h"
 
 MotionTrail trail;
 MotionTrail trail_p1;
@@ -531,7 +532,7 @@ void draw_player(Player *player) {
     float cos_r = cosf(rad);
     float sin_r = sinf(rad);
 
-    //int flip_x_mult = (state.mirror_mult);
+    int flip_x_mult = (state.mirror_mult < 0);
     int flip_y_mult = (player->upside_down ? -1 : 1);
 
     float m00 = cos_r;
@@ -545,50 +546,53 @@ void draw_player(Player *player) {
     float rot_x = local_x * m00 + local_y * m01;
     float rot_y = local_x * m10 + local_y * m11;
 
-    float p_x = calc_x + rot_x * scale;
+    float p_x = get_mirror_x(calc_x + rot_x * scale, state.mirror_factor);
     float p_y = calc_y + rot_y * scale;
+
+    float calc_x_mirror = get_mirror_x(calc_x, state.mirror_factor);
+    float p_rot = player->lerp_rotation * state.mirror_mult;
 
     switch (player->gamemode) {
         case GAMEMODE_PLAYER:
-            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, calc_x, calc_y, player->lerp_rotation, false, false, scale, 
+            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x_mult, false, scale, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
             break;
         case GAMEMODE_SHIP:
-            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, p_x, p_y, player->lerp_rotation, false, player->upside_down, scale * 0.5f, 
+            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, p_x, p_y, p_rot, flip_x_mult, player->upside_down, scale * 0.5f, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
-            spawn_icon_at(GAMEMODE_SHIP, selected_ship, player_glow_enabled, calc_x, calc_y, player->lerp_rotation, false, player->upside_down, scale, 
+            spawn_icon_at(GAMEMODE_SHIP, selected_ship, player_glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x_mult, player->upside_down, scale, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
             break;
         case GAMEMODE_PLAYER_BALL:
-            spawn_icon_at(GAMEMODE_PLAYER_BALL, selected_ball, player_glow_enabled, calc_x, calc_y, player->lerp_rotation, false, false, scale, 
+            spawn_icon_at(GAMEMODE_PLAYER_BALL, selected_ball, player_glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x_mult, false, scale, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
             break;
         case GAMEMODE_BIRD:
-            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, p_x, p_y, player->lerp_rotation, false, player->upside_down, scale * 0.5f, 
+            spawn_icon_at(GAMEMODE_PLAYER, selected_cube, player_glow_enabled, p_x, p_y, p_rot, flip_x_mult, player->upside_down, scale * 0.5f, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
-            spawn_icon_at(GAMEMODE_BIRD, selected_ufo, player_glow_enabled, calc_x, calc_y, player->lerp_rotation, false, player->upside_down, scale, 
+            spawn_icon_at(GAMEMODE_BIRD, selected_ufo, player_glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x_mult, player->upside_down, scale, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
             break;    
         case GAMEMODE_DART:
-            spawn_icon_at(GAMEMODE_DART, selected_wave, player_glow_enabled, calc_x, calc_y, player->lerp_rotation, false, false, scale, 
+            spawn_icon_at(GAMEMODE_DART, selected_wave, player_glow_enabled, calc_x_mirror, calc_y, p_rot, flip_x_mult, false, scale, 
                 primary_color,
                 secondary_color,
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)

@@ -226,6 +226,10 @@ void set_aa(bool aa) {
     aaEnabled = aa;
 }
 
+float get_mirror_x(float x, float factor) {
+    return x + factor * ((SCREEN_WIDTH / SCALE) - 2.0f * x);
+}
+
 #include "c2d_internal.h"
 
 bool C2D_DrawTriangleUV(float x0, float y0, float u0, float v0, u32 clr0, float x1, float y1, float u1, float v1, u32 clr1, float x2, float y2, float u2, float v2, u32 clr2, float depth, C2D_Image img) {

@@ -13,6 +13,8 @@
 #include "state.h"
 #include "player/collision.h"
 
+#include "utils/gfx.h"
+
 #include "particles/object_particles.h"
 
 const Color white = { 255, 255, 255 };
@@ -343,7 +345,7 @@ void spawn_object_at(
 ) {
     const GameObject* obj = &game_objects[id];
 
-    float rad = C3D_AngleFromDegrees(deg);
+    float rad = C3D_AngleFromDegrees(adjust_angle(deg, 0, state.mirror_mult < 0));
     float cos_r = cosf(rad);
     float sin_r = sinf(rad);
 
@@ -865,7 +867,7 @@ void draw_objects() {
         for (int i = 0; i < sec->object_count; i++) {
             int obj = sec->objects[i];
             
-            float calc_x = ((objects.x[obj] - state.camera_x));
+            float calc_x = (objects.x[obj] - state.camera_x);
             float calc_y = SCREEN_HEIGHT - ((objects.y[obj] - state.camera_y));  
             if (calc_x < -60 || calc_x >= (SCREEN_WIDTH / SCALE) + 60) continue;
             if (calc_y < -60 || calc_y >= (SCREEN_HEIGHT / SCALE) + 60) continue;
@@ -897,10 +899,10 @@ void draw_objects() {
             spawn_object_at(
                 obj,
                 objects.id[obj],
-                calc_x + fade_x,
+                get_mirror_x(calc_x, state.mirror_factor) + fade_x,
                 calc_y + fade_y,
                 objects.rotation[obj],
-                objects.flippedH[obj],
+                objects.flippedH[obj] ^ (state.mirror_mult < 0),
                 objects.flippedV[obj],
                 fade_scale
             );
@@ -1073,5 +1075,24 @@ void spawn_icon_at(
 
             C2D_DrawSpriteTinted(&spr, &tints[real_index]);
         }
+    }
+}
+
+float approachf(float current, float target, float speed, float smoothing) {
+    float diff = target - current;
+    float step = diff * smoothing; // smoothing in [0,1], e.g. 0.1 for gentle, 0.5 for fast
+    if (fabsf(diff) < speed)
+        return target;
+    return current + step + (diff > 0 ? speed : -speed);
+}
+
+
+void handle_mirror_transition() {
+    state.mirror_factor = approachf(state.mirror_factor, state.intended_mirror_factor, 0.01f, 0.002f);
+    state.mirror_speed_factor = approachf(state.mirror_speed_factor, state.intended_mirror_speed_factor, 0.02f, 0.004f);
+    if (state.mirror_factor >= 0.5f) {
+        state.mirror_mult = -1;
+    } else {
+        state.mirror_mult = 1;
     }
 }

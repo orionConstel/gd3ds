@@ -124,3 +124,4 @@ void spawn_icon_at(
     u32 p2_color,
     u32 glow_color
 );
+void handle_mirror_transition();

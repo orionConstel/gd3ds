@@ -232,7 +232,23 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 SET_ACTIVATED(obj, true);
             } 
             break;
+            
+        case ORANGE_MIRROR_PORTAL:
+            if (!GET_ACTIVATED(obj)) {
+                state.intended_mirror_factor = 1.f;
+                state.intended_mirror_speed_factor = -1.f;
+                SET_ACTIVATED(obj, true);
+            }
+            break;
 
+        case BLUE_MIRROR_PORTAL:
+            if (!GET_ACTIVATED(obj)) {
+                state.intended_mirror_factor = 0.f;
+                state.intended_mirror_speed_factor = 1.f;
+                SET_ACTIVATED(obj, true);
+            }
+            break;
+        
         case BIG_PORTAL:
             if (!GET_ACTIVATED(obj)) {
                 set_mini(player, false);
