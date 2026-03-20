@@ -7,7 +7,11 @@
 
 #include "trail.h"
 
-#define STEPS_DT (1.f/240)
+extern int frame_skipped;
+
+#define STEPS_HZ 240
+#define STEPS_DT ((1.f + frame_skipped) / STEPS_HZ) // 1/240 seconds per physics step
+#define STEPS_DT_UNMOD (1.f / STEPS_HZ) // 1/240 seconds per physics step
 
 typedef struct {
     int slope_id;

@@ -25,6 +25,8 @@ MotionTrail wave_trail_p2;
 
 ParticleSystem drag_particles;
 
+int frame_skipped = 0;
+
 const float player_speeds[SPEED_COUNT] = {
 	251.16007972276924,
 	311.580093712804,

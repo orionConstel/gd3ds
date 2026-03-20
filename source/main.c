@@ -32,6 +32,8 @@
 
 #include <stdarg.h>
 
+#include "player/player.h"
+
 #define CITRA_TYPE 0x20000
 #define CITRA_VERSION 11
 
@@ -156,6 +158,10 @@ void game_loop() {
     drag_particles.cfg.startColorGreen = get_white_if_black(p1_color).g / 255.f;
     drag_particles.cfg.startColorBlue  = get_white_if_black(p1_color).b / 255.f;
 
+    float accumulator = 0.0f;
+    u64 lastTime = svcGetSystemTick();
+    bool fixed_dt = true;
+
     // Main loop
     while (aptMainLoop()) {
         hidScanInput();
@@ -176,7 +182,20 @@ void game_loop() {
         state.input.pressedJump = ((kDown & KEY_A) || (kDown & KEY_TOUCH)) == true;
         state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (kHeld & KEY_TOUCH)) == true;
         if (state.death_timer <= 0 && !(kHeld & KEY_Y))  {
-            for (size_t i = 0; i < 4; i++) {
+            u64 now = svcGetSystemTick();
+            float dt = (now - lastTime) / (CPU_TICKS_PER_MSEC * 1000);
+            lastTime = now;
+            if (dt > 1) dt = 1; // Avoid spiral of death
+            if (fixed_dt) {
+                dt = STEPS_DT_UNMOD;
+                if (!being_faded) fixed_dt = false;
+            }
+
+            accumulator += dt;
+
+            // Run simulation in fixed steps
+            while (accumulator >= STEPS_DT) {
+                u64 start_physics = svcGetSystemTick();
                 state.current_player = 0;
                 state.old_player = state.player;
                 
@@ -201,7 +220,17 @@ void game_loop() {
 
                     if (state.dead) break;
                 }
+                
+                u64 end_physics = svcGetSystemTick();
+                float physics_time = (end_physics - start_physics) / (CPU_TICKS_PER_MSEC * 1000);
+
+                if (physics_time >= STEPS_DT_UNMOD) {
+                    frame_skipped = (int) (physics_time * STEPS_HZ);
+                }
+
+                else frame_skipped = 0;
                 run_camera();
+                accumulator -= STEPS_DT;
             }
         }
 
@@ -218,6 +247,7 @@ void game_loop() {
                 init_variables();
                 reload_level(); 
                 toggle_playback_mp3();
+                fixed_dt = true; 
             }
         }
 
