@@ -17,3 +17,4 @@ void init_op_system();
 bool is_ps_already_loaded(int id);
 int load_object_particles(int id, const ParticleDefinition *cfg, bool stationary);
 void draw_object_particles();
+void spawn_object_particles(int obj);

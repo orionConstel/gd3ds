@@ -30,6 +30,8 @@
 #include "particles/particles.h"
 #include "particles/object_particles.h"
 
+#include <stdarg.h>
+
 #define CITRA_TYPE 0x20000
 #define CITRA_VERSION 11
 
@@ -76,6 +78,51 @@ void no_dsp_firmware(void) {
     gfxExit();
     romfsExit();
     exit(22);
+}
+
+static FILE *log_file = NULL;
+
+static void ensure_log_file(void) {
+    if (log_file) return;  // already open
+
+    char log_filename[278];
+    snprintf(log_filename, sizeof(log_filename), "%s/%s", CONFIG_ROOT, "output.txt");
+    
+    log_file = fopen(log_filename, "a");
+}
+
+static void close_log_file(void) {
+    if (log_file) {
+        fclose(log_file);
+        log_file = NULL;
+    }
+}
+
+int output_log(const char *fmt, ...) {
+    ensure_log_file();
+
+    if (!log_file) return 0; // failed to open log
+
+    va_list args1, args2;
+    int ret;
+
+    va_start(args1, fmt);
+    va_copy(args2, args1);  // duplicate args for two outputs
+
+    // Output to log file
+    ensure_log_file();
+    if (log_file) {
+        ret = vfprintf(log_file, fmt, args1);
+        fflush(log_file);
+    }
+
+    // Output to console (stdout)
+    ret = vprintf(fmt, args2);
+    
+    va_end(args2);
+    va_end(args1);
+
+    return ret;
 }
 
 void game_loop() {
@@ -130,7 +177,12 @@ void game_loop() {
             for (size_t i = 0; i < 4; i++) {
                 state.current_player = 0;
                 state.old_player = state.player;
+                
+                trail = trail_p1;
+                wave_trail = wave_trail_p1;
                 handle_player(&state.player);
+                trail_p1 = trail;
+                wave_trail_p1 = wave_trail;
 
                 if (state.dead) break;
 
@@ -138,7 +190,11 @@ void game_loop() {
                     // Run second player
                     state.old_player = state.player2;
                     state.current_player = 1;
+                    trail = trail_p2;
+                    wave_trail = wave_trail_p2;
                     handle_player(&state.player2);
+                    trail_p2 = trail;
+                    wave_trail_p2 = wave_trail;
 
                     if (state.dead) break;
                 }
@@ -255,6 +311,9 @@ void game_assets_init() {
     
     iconSheet = C2D_SpriteSheetLoad("romfs:/gfx/icons.t3x");
     if (!iconSheet) svcBreak(USERBREAK_PANIC);
+
+    trailSheet = C2D_SpriteSheetLoad("romfs:/gfx/trails.t3x");
+    if (!trailSheet) svcBreak(USERBREAK_PANIC);
 }
 
 
@@ -308,6 +367,8 @@ int main(int argc, char* argv[]) {
                 break;
         }
     }
+
+    close_log_file();
 
     free_cached_sprites();
 

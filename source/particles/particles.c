@@ -73,8 +73,8 @@ void initParticle(ParticleSystem* ps, const ParticleDefinition* cfg, int i) {
                  cfg->sourcePositionVariancey * rand_minus1_1();
 
     // Angle and speed
-    float angle = C3D_AngleFromDegrees(normalize_angle(cfg->angle +
-                  cfg->angleVariance * rand_minus1_1()));
+    float angle = C3D_AngleFromDegrees(cfg->angle +
+                  cfg->angleVariance * rand_minus1_1());
     
 
     float speed = cfg->speed +

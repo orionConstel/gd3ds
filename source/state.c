@@ -132,12 +132,15 @@ void set_mini(Player *player, bool mini) {
 }
 
 void init_variables() {
-    //MotionTrail_Init(&trail_p1, 0.3f, 3, 10.0f, FALSE, p2, trail_tex);
-    //MotionTrail_Init(&trail_p2, 0.3f, 3, 10.0f, FALSE, p1, trail_tex);
-    //MotionTrail_Init(&wave_trail_p1, 3.f, 3, 10.0f, TRUE, p2, trail_tex);
-    //MotionTrail_Init(&wave_trail_p2, 3.f, 3, 10.0f, TRUE, p1, trail_tex);
-    //MotionTrail_StopStroke(&trail_p1);
-    //MotionTrail_StopStroke(&trail_p2);
+    C2D_Image img = C2D_SpriteSheetGetImage(trailSheet, 0);
+
+    C3D_TexSetFilter(img.tex, GPU_LINEAR, GPU_LINEAR);
+    MotionTrail_Init(&trail_p1, 0.3f, 3, 10.0f, false, p2_color, img);
+    MotionTrail_Init(&trail_p2, 0.3f, 3, 10.0f, false, p1_color, img);
+    MotionTrail_Init(&wave_trail_p1, 3.f, 3, 10.0f, true, p2_color, img);
+    MotionTrail_Init(&wave_trail_p2, 3.f, 3, 10.0f, true, p1_color, img);
+    MotionTrail_StopStroke(&trail_p1);
+    MotionTrail_StopStroke(&trail_p2);
 
     state.camera_wall_timer = 0;
     state.camera_wall_initial_y = 0;

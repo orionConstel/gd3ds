@@ -66,3 +66,4 @@ extern const ParticleDefinition drag_effect;
 extern const ParticleDefinition ring_effect;
 extern const ParticleDefinition portal_effect_01;
 extern const ParticleDefinition bump_effect;
+extern const ParticleDefinition portal_effect_08;

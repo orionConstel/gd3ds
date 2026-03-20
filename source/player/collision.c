@@ -99,6 +99,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
     switch (objects.id[obj]) {
         case YELLOW_PAD:
             if (!GET_ACTIVATED(obj)) {
+                MotionTrail_ResumeStroke(&trail);
                 player->vel_y = jump_heights_table[state.speed][JUMP_YELLOW_PAD][player->gamemode][player->mini];
                 player->on_ground = false;
                 player->inverse_rotation = false;
@@ -108,6 +109,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             break;
         case PINK_PAD:
             if (!GET_ACTIVATED(obj)) {
+                MotionTrail_ResumeStroke(&trail);
                 player->vel_y = jump_heights_table[state.speed][JUMP_PINK_PAD][player->gamemode][player->mini];
                 player->on_ground = false;
                 player->inverse_rotation = false;
@@ -126,6 +128,8 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     break;
 
 
+                MotionTrail_ResumeStroke(&trail);
+                if (player->gamemode == GAMEMODE_DART) MotionTrail_AddWavePoint(&wave_trail);
                 player->left_ground = true;
 
                 player->gravObj_id = obj;
@@ -141,6 +145,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             break;
         case YELLOW_ORB:
             if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {
+                MotionTrail_ResumeStroke(&trail);
                 player->vel_y = jump_heights_table[state.speed][JUMP_YELLOW_ORB][player->gamemode][player->mini];
                 
                 player->ball_rotation_speed = -1.f;
@@ -156,6 +161,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             break;
         case PINK_ORB:
             if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {
+                MotionTrail_ResumeStroke(&trail);
                 player->vel_y = jump_heights_table[state.speed][JUMP_PINK_ORB][player->gamemode][player->mini];
                 
                 player->ball_rotation_speed = -1.f;
@@ -171,6 +177,8 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             break;
         case BLUE_ORB:
             if (!GET_ACTIVATED(obj) && (state.input.holdJump) && player->buffering_state == BUFFER_READY) {    
+                MotionTrail_ResumeStroke(&trail);
+                if (player->gamemode == GAMEMODE_DART) MotionTrail_AddWavePoint(&wave_trail);
                 player->gravObj_id = obj;
                 
                 player->vel_y = jump_heights_table[state.speed][JUMP_BLUE_ORB][player->gamemode][player->mini];
@@ -195,6 +203,8 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             if (!GET_ACTIVATED(obj)) {
                 player->ceiling_inv_time = 0.1f;
                 if (player->upside_down) {
+                    if (player->gamemode != GAMEMODE_PLAYER_BALL) MotionTrail_ResumeStroke(&trail);
+                    if (player->gamemode == GAMEMODE_DART) MotionTrail_AddWavePoint(&wave_trail);
                     player->vel_y /= -2;
                     player->upside_down = false;
                     player->inverse_rotation = false;
@@ -210,6 +220,8 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
             if (!GET_ACTIVATED(obj)) {
                 player->ceiling_inv_time = 0.1f;
                 if (!player->upside_down) {
+                    if (player->gamemode != GAMEMODE_PLAYER_BALL) MotionTrail_ResumeStroke(&trail);
+                    if (player->gamemode == GAMEMODE_DART) MotionTrail_AddWavePoint(&wave_trail);
                     player->vel_y /= -2;
                     player->upside_down = true;
                     player->inverse_rotation = false;
@@ -380,6 +392,10 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     player->inverse_rotation = false;
                     player->snap_rotation = true;
                     flip_other_player(state.current_player ^ 1);
+
+                    wave_trail.positionR = (Vec2){player->x, player->y};  
+                    wave_trail.startingPositionInitialized = true;
+                    MotionTrail_AddWavePoint(&wave_trail);
                 }
 
                 if (state.dual) {
@@ -395,6 +411,14 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                 state.dual = true;
                 state.dual_portal_y = objects.y[obj];
                 setup_dual();
+
+                if (player->gamemode == GAMEMODE_DART) {
+                    MotionTrail_Init(&wave_trail_p2, 3.f, 3, 10.0f, true, p1_color, C2D_SpriteSheetGetImage(trailSheet, 0));   
+                    wave_trail_p2.positionR = (Vec2){state.player2.x, state.player2.y};  
+                    wave_trail_p2.startingPositionInitialized = true;
+                    MotionTrail_AddWavePoint(&wave_trail_p2);
+                }
+                MotionTrail_Init(&trail_p2, 0.3f, 3, 10.0f, false, p1_color, C2D_SpriteSheetGetImage(trailSheet, 0));
 
                 SET_ACTIVATED(obj, true);
             }

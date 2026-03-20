@@ -225,3 +225,23 @@ void set_wide(bool wide) {
 void set_aa(bool aa) {
     aaEnabled = aa;
 }
+
+#include "c2d_internal.h"
+
+bool C2D_DrawTriangleUV(float x0, float y0, float u0, float v0, u32 clr0, float x1, float y1, float u1, float v1, u32 clr1, float x2, float y2, float u2, float v2, u32 clr2, float depth, C2D_Image img) {
+	C2Di_Context* ctx = C2Di_GetContext();
+	if (!(ctx->flags & C2DiF_Active))
+		return false;
+	if (!C2Di_CheckBufSpace(ctx, 3, 3))
+		return false;
+
+	C2Di_SetMode((ctx->flags & C2DiF_TintMode_Mask) >> (C2DiF_TintMode_Shift - C2DiF_Mode_Shift));
+	C2Di_SetTex(img.tex);
+	C2Di_Update();
+
+	C2Di_AppendTri();
+	C2Di_AppendVtx(x0, y0, depth, u0, v0, 0, 1.f, clr0);
+	C2Di_AppendVtx(x1, y1, depth, u1, v1, 0, 1.f, clr1);
+	C2Di_AppendVtx(x2, y2, depth, u2, v2, 0, 1.f, clr2);
+	return true;
+}

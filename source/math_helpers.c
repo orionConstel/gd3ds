@@ -114,3 +114,8 @@ float adjust_angle_y(float angle, int flipY) {
 
     return angle;
 }
+
+
+float square_distance(float xa, float ya, float xb, float yb) {
+	return ((xb - xa) * (xb - xa)) + ((yb - ya) * (yb - ya));
+}

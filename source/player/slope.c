@@ -196,7 +196,6 @@ void slope_calc(int obj, Player *player) {
 
             vel *= time;
 
-            //output_log("%d - vel %.2f orig %.2f time %.2f elapsed %.2f %.2f y %.2f obj_y %.2f\n", state.current_player, -vel, -orig, time, player->timeElapsed, player->slope_data.elapsed, player->y, objects.y[obj] );
             player->vel_y = vel;
             player->inverse_rotation = true;
             player->coyote_slope = player->slope_data;
@@ -504,8 +503,6 @@ void slope_collide(int obj, Player *player) {
         bool clip = slope_touching(obj, player);
         bool snapDown = (orient == ORIENT_NORMAL_DOWN || orient == ORIENT_UD_DOWN) && player->vel_y * mult > 0 && player->x - obj_getLeft(obj) > 0;
 
-        //output_log("p %d - orient %d, slope angle %.2f - hasSlope %d, projectedHit %d clip %d snapDown %d (clip val %.2f)\n", state.current_player, orient, slope_angle(obj,player), hasSlope, projectedHit, clip, snapDown, grav(player, player->y) - grav(player, expected_slope_y(obj, player)));
-        
         if ((projectedHit && clip) || snapDown) {
             // If wave, just die, nothing else, wave hates slopes
             if (player->gamemode == GAMEMODE_DART) {
@@ -547,9 +544,7 @@ void slope_collide(int obj, Player *player) {
                 // Make both times synced if close enough
                 if (other_player->slope_data.slope_id >= 0 && fabsf(player->timeElapsed - other_player->slope_data.elapsed) < 0.10) {
                     player->slope_data.elapsed = other_player->slope_data.elapsed;
-                    //output_log("yes elapsing %.2f\n", other_player->slope_data.elapsed);
                 } else {
-                    //output_log("no elapsing %.2f becoz other player slope %d and fabsf = %.2f\n", player->timeElapsed, (int) other_player->slope_data.slope, fabsf(player->timeElapsed - other_player->slope_data.elapsed));
                     player->slope_data.elapsed = player->timeElapsed;
                 }
             }
@@ -606,7 +601,6 @@ void snap_player_to_slope(int obj, Player *player) {
             }
         }
 
-        //output_log("best snap %.2f prev rotation %.2f\n", bestSnap, player->rotation);
         player->rotation = bestSnap;
     } else if (player->gamemode == GAMEMODE_BIRD) {
         player->rotation = RadToDeg(slope_snap_angle(obj, player));

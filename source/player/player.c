@@ -11,6 +11,17 @@
 #include "collision.h"
 #include "math_helpers.h"
 
+#include "main.h"
+
+
+MotionTrail trail;
+MotionTrail trail_p1;
+MotionTrail trail_p2;
+
+MotionTrail wave_trail;
+MotionTrail wave_trail_p1;
+MotionTrail wave_trail_p2;
+
 ParticleSystem drag_particles;
 
 const float player_speeds[SPEED_COUNT] = {
@@ -45,8 +56,8 @@ void set_p_velocity(Player *player, float vel) {
 void cube_gamemode(Player *player) {
     int mult = (player->upside_down ? -1 : 1);
     
-    //trail.positionR = (Vec2){player->x, player->y};  
-    //trail.startingPositionInitialized = true;
+    trail.positionR = (Vec2){player->x, player->y};  
+    trail.startingPositionInitialized = true;
 
     player->gravity = -2794.1082;
     
@@ -69,7 +80,7 @@ void cube_gamemode(Player *player) {
     
     
     if (player->on_ground) {
-        //MotionTrail_StopStroke(&trail);
+        MotionTrail_StopStroke(&trail);
         if (player->slope_data.slope_id < 0) player->rotation = roundf(player->rotation / 90.0f) * 90.0f;
     }
 
@@ -118,6 +129,31 @@ void update_ship_rotation(Player *player) {
 }
 
 void ship_gamemode(Player *player) {
+    float scale = (player->mini) ? 0.6f : 1.f;
+
+    float rad = C3D_AngleFromDegrees(player->rotation);
+    float cos_r = cosf(rad);
+    float sin_r = sinf(rad);
+
+    int flip_y_mult = (player->upside_down ? -1 : 1);
+
+    float m00 = cos_r;
+    float m01 = sin_r;
+    float m10 = -sin_r;
+    float m11 = cos_r;
+
+    const float local_x = -14;
+    const float local_y = -8 * flip_y_mult;
+
+    float rot_x = local_x * m00 + local_y * m01;
+    float rot_y = local_x * m10 + local_y * m11;
+
+    float x = player->x + rot_x * scale;
+    float y = player->y + rot_y * scale;
+    
+    trail.positionR = (Vec2){x, y};  
+    trail.startingPositionInitialized = true;
+
     if (state.dual) {
         // Make both dual players symetric
         if (state.input.holdJump) {
@@ -166,11 +202,15 @@ static float ballJumpHeights[SPEED_COUNT] = {
 };
 
 void ball_gamemode(Player *player) {
+    trail.positionR = (Vec2){player->x, player->y};  
+    trail.startingPositionInitialized = true;
+
     int mult = (player->upside_down ? -1 : 1);
 
     player->gravity = -1676.46672f;  
     
     if (player->on_ground || player->on_ceiling) {
+        MotionTrail_StopStroke(&trail);
         player->ball_rotation_speed = 2.3;
     }
 
@@ -200,6 +240,31 @@ void ball_gamemode(Player *player) {
 }
 
 void ufo_gamemode(Player *player) {
+    float scale = (player->mini) ? 0.6f : 1.f;
+
+    float rad = C3D_AngleFromDegrees(player->rotation);
+    float cos_r = cosf(rad);
+    float sin_r = sinf(rad);
+
+    int flip_y_mult = (player->upside_down ? -1 : 1);
+
+    float m00 = cos_r;
+    float m01 = sin_r;
+    float m10 = -sin_r;
+    float m11 = cos_r;
+
+    const float local_x = 0;
+    const float local_y = -12 * flip_y_mult;
+
+    float rot_x = local_x * m00 + local_y * m01;
+    float rot_y = local_x * m10 + local_y * m11;
+
+    float x = player->x + rot_x * scale;
+    float y = player->y + rot_y * scale;
+    
+    trail.positionR = (Vec2){x, y};  
+    trail.startingPositionInitialized = true;
+
     int mult = (player->upside_down ? -1 : 1);
     bool buffering_check = ((state.old_player.gamemode == GAMEMODE_PLAYER || state.old_player.gamemode == GAMEMODE_SHIP || state.old_player.gamemode == GAMEMODE_DART) && (state.input.holdJump));
     if (player->buffering_state == BUFFER_READY && (state.input.pressedJump || buffering_check)) {
@@ -247,17 +312,27 @@ void ufo_gamemode(Player *player) {
 }
 
 void wave_gamemode(Player *player) {
+    trail.positionR = (Vec2){player->x, player->y};  
+    trail.startingPositionInitialized = true;
+    
+    wave_trail.positionR = (Vec2){player->x, player->y};  
+    wave_trail.startingPositionInitialized = true;
+    if (player->cutscene_timer == 0) wave_trail.opacity = 1.f;
+
     if (player->buffering_state == BUFFER_READY) player->buffering_state = BUFFER_END;
 
     bool input = (state.input.holdJump);
     player->gravity = 0;
 
     player->vel_y = (input * 2 - 1) * player_speeds[state.speed] * (player->mini ? 2 : 1);
+    if (player->vel_y != state.old_player.vel_y || player->on_ground != state.old_player.on_ground || player->on_ceiling != state.old_player.on_ceiling) {
+        MotionTrail_AddWavePoint(&wave_trail);
+    }
 }
 
 void run_player(Player *player) {
-    //float scale = (player->mini) ? 0.6f : 1.f;
-    //trail.stroke = 10.f * scale;
+    float scale = (player->mini) ? 0.6f : 1.f;
+    trail.stroke = 10.f * scale;
     
     if (!player->left_ground) {
         // Ground
@@ -292,29 +367,32 @@ void run_player(Player *player) {
             cube_gamemode(player);
             break;
         case GAMEMODE_SHIP:
+            MotionTrail_ResumeStroke(&trail);
             ship_gamemode(player);
             break;
         case GAMEMODE_PLAYER_BALL:
             ball_gamemode(player);
             break;
         case GAMEMODE_BIRD:
+            MotionTrail_ResumeStroke(&trail);
             ufo_gamemode(player);
             break;
         case GAMEMODE_DART:
+            MotionTrail_ResumeStroke(&trail);
             wave_gamemode(player);
             break;
     }
     
     player->time_since_ground += STEPS_DT;
 
-    /*if (player->gamemode != GAMEMODE_DART || player->cutscene_timer > 0) {
+    if (player->gamemode != GAMEMODE_DART || player->cutscene_timer > 0) {
         if (wave_trail.opacity > 0) wave_trail.opacity -= 0.02f;
         
         if (wave_trail.opacity <= 0) {
             wave_trail.opacity = 0;
             wave_trail.nuPoints = 0;
         }
-    }*/
+    }
 
     if (player->cutscene_timer > 0) return;
 
@@ -426,14 +504,16 @@ void handle_player(Player *player) {
 }
 
 void draw_player(Player *player) {
+    MotionTrail_Update(&trail, DT);
+    MotionTrail_UpdateWaveTrail(&wave_trail, DT);
+
+    change_blending(true);
+    MotionTrail_Draw(&trail);
+    MotionTrail_DrawWaveTrail(&wave_trail);
+    change_blending(false);
+
     float calc_x = ((player->x - state.camera_x));
     float calc_y = GSP_SCREEN_WIDTH - ((player->y - state.camera_y));
-
-    /*MotionTrail_Update(&trail, dt);
-    MotionTrail_UpdateWaveTrail(&wave_trail, dt);
-
-    MotionTrail_Draw(&trail);
-    MotionTrail_DrawWaveTrail(&wave_trail);*/
 
     u32 primary_color = C2D_Color32(p1_color.r, p1_color.g, p1_color.b, 255);
     u32 secondary_color = C2D_Color32(p2_color.r, p2_color.g, p2_color.b, 255);

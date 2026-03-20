@@ -5,6 +5,8 @@
 #include "icons.h"
 #include "particles/particles.h"
 
+#include "trail.h"
+
 #define STEPS_DT (1.f/240)
 
 typedef struct {
@@ -89,6 +91,14 @@ enum PlayerSpeeds {
     SPEED_FASTER,
     SPEED_COUNT
 };
+
+extern MotionTrail trail;
+extern MotionTrail trail_p1;
+extern MotionTrail trail_p2;
+
+extern MotionTrail wave_trail;
+extern MotionTrail wave_trail_p1;
+extern MotionTrail wave_trail_p2;
 
 extern ParticleSystem drag_particles;
 

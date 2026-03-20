@@ -1,6 +1,8 @@
 #include "object_particles.h"
 #include "state.h"
 #include "main.h"
+#include "player/collision.h"
+#include "math_helpers.h"
 
 ObjectParticles object_particle[MAX_OBJECT_PS];
 
@@ -71,5 +73,236 @@ void draw_object_particles() {
 
             drawParticleSystem(&object_particle[i].ps, object_particle[i].isStationary, fade_x, fade_y, opacity);
         }
+    }
+}
+
+void set_particle_color(ParticleDefinition *cfg, float red, float green, float blue) {
+    cfg->startColorRed = red;
+    cfg->startColorGreen = green;
+    cfg->startColorBlue = blue;
+
+    cfg->finishColorRed = red;
+    cfg->finishColorGreen = green;
+    cfg->finishColorBlue = blue;
+}
+
+void spawn_object_particles(int obj) {
+    int index;
+    switch (objects.id[obj]) {
+        case YELLOW_ORB:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &ring_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 1, 0);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case BLUE_ORB:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &ring_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.69f, 1);
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case PINK_ORB:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &ring_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.5f, 1);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case YELLOW_PAD:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &bump_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 1, 0);
+
+                    object_particle[index].ps.cfg.angle = 180.f - (adjust_angle_y(objects.rotation[obj], objects.flippedV[obj]) + 90.f);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case BLUE_PAD:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &bump_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.69f, 1);
+
+                    object_particle[index].ps.cfg.angle = 180.f - (adjust_angle_y(objects.rotation[obj], objects.flippedV[obj]) + 90.f);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case PINK_PAD:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &bump_effect, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.5f, 1);
+
+                    object_particle[index].ps.cfg.angle = 180.f - (adjust_angle_y(objects.rotation[obj], objects.flippedV[obj]) + 90.f);
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case YELLOW_GRAVITY_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 1, 0);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case BLUE_GRAVITY_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.69f, 1);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case CUBE_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 1, 0.25f);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case SHIP_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.5f, 1);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case BALL_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.25f, 0.25f);
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case UFO_PORTAL:
+        case ORANGE_MIRROR_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.75f, 0);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case WAVE_PORTAL:
+        case BLUE_MIRROR_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_01, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.69f, 1);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case BIG_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_08, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 1, 0.25f);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case MINI_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_08, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.5f, 1);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case DUAL_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_08, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 0.75f, 0);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case DIVORCE_PORTAL:
+            if (!is_ps_already_loaded(obj)) {
+                index = load_object_particles(obj, &portal_effect_08, false);
+                if (index >= 0) {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.69f, 1);
+
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
     }
 }
