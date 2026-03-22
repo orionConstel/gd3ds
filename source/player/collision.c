@@ -601,58 +601,71 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
     if (!GET_COLLIDED(obj)) SET_HITBOX_COUNTER(obj, GET_HITBOX_COUNTER(obj) + 1); 
 }
 
-void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]) {
-    float hw = w / 2.0f, hh = h / 2.0f;
-    angle = -angle; // Make it clockwise
+static inline void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]) {
+    float hw = w * 0.5f, hh = h * 0.5f;
+    angle = -angle;
     float rad = C3D_AngleFromDegrees(angle);
     float cos_a = cosf(rad), sin_a = sinf(rad);
     
+    // Precompute rotated half-dimensions
+    float hw_cos = hw * cos_a, hw_sin = hw * sin_a;
+    float hh_cos = hh * cos_a, hh_sin = hh * sin_a;
+    
+    out[0].x = cx - hw_cos + hh_sin;
+    out[0].y = cy - hw_sin - hh_cos;
+    
+    out[1].x = cx + hw_cos + hh_sin;
+    out[1].y = cy + hw_sin - hh_cos;
+    
+    out[2].x = cx + hw_cos - hh_sin;
+    out[2].y = cy + hw_sin + hh_cos;
+    
+    out[3].x = cx - hw_cos - hh_sin;
+    out[3].y = cy - hw_sin + hh_cos;
+}
 
-    float local[4][2] = {
-        { -hw, -hh },
-        {  hw, -hh },
-        {  hw,  hh },
-        { -hw,  hh }
-    };
-    for (int i = 0; i < 4; ++i) {
-        out[i].x = cx + local[i][0] * cos_a - local[i][1] * sin_a;
-        out[i].y = cy + local[i][0] * sin_a + local[i][1] * cos_a;
-    }
+static inline float dot_product(float ax, float ay, float bx, float by) {
+    return ax * bx + ay * by;
 }
 
 static bool sat_overlap(const Vec2D a[4], const Vec2D b[4]) {
-    // Test all axes (normals of edges)
-    for (int shape = 0; shape < 2; ++shape) {
-        const Vec2D *verts = (shape == 0) ? a : b;
-        for (int i = 0; i < 4; ++i) {
-            // Edge from verts[i] to verts[(i+1)%4]
-            float dx = verts[(i+1)%4].x - verts[i].x;
-            float dy = verts[(i+1)%4].y - verts[i].y;
-            // Normal axis
-            float ax = -dy, ay = dx;
-
-            // Project both shapes onto axis
-            float minA = INFINITY, maxA = -INFINITY;
-            float minB = INFINITY, maxB = -INFINITY;
-            for (int j = 0; j < 4; ++j) {
-                float projA = a[j].x * ax + a[j].y * ay;
-                float projB = b[j].x * ax + b[j].y * ay;
-                if (projA < minA) minA = projA;
-                if (projA > maxA) maxA = projA;
-                if (projB < minB) minB = projB;
-                if (projB > maxB) maxB = projB;
-            }
-            // If projections do not overlap, there is a separating axis
-            if (maxA <= minB || maxB <= minA) return false;
-        }
+    // Test 4 axes (only from shape A, due to rectangle symmetry)
+    for (int i = 0; i < 4; ++i) {
+        // Normal perpendicular to edge
+        float dx = a[(i+1) & 3].x - a[i].x;
+        float dy = a[(i+1) & 3].y - a[i].y;
+        float ax = -dy, ay = dx;
+        
+        // Fast min/max using arithmetic instead of conditionals
+        float p0 = dot_product(a[0].x, a[0].y, ax, ay);
+        float p1 = dot_product(a[1].x, a[1].y, ax, ay);
+        float p2 = dot_product(a[2].x, a[2].y, ax, ay);
+        float p3 = dot_product(a[3].x, a[3].y, ax, ay);
+        
+        float minA = fminf(fminf(p0, p1), fminf(p2, p3));
+        float maxA = fmaxf(fmaxf(p0, p1), fmaxf(p2, p3));
+        
+        float q0 = dot_product(b[0].x, b[0].y, ax, ay);
+        float q1 = dot_product(b[1].x, b[1].y, ax, ay);
+        float q2 = dot_product(b[2].x, b[2].y, ax, ay);
+        float q3 = dot_product(b[3].x, b[3].y, ax, ay);
+        
+        float minB = fminf(fminf(q0, q1), fminf(q2, q3));
+        float maxB = fmaxf(fmaxf(q0, q1), fmaxf(q2, q3));
+        
+        if (maxA <= minB || maxB <= minA) return false;
     }
     return true;
 }
 
 bool intersect(float x1, float y1, float w1, float h1, float angle1,
-               float x2, float y2, float w2, float h2, float angle2) {
-    float big = fmaxf(w1, h1) + fmaxf(w2, h2);
-    if (fabsf(x1 - x2) > big || fabsf(y1 - y2) > big) {
+                    float x2, float y2, float w2, float h2, float angle2) {
+    // Tighter AABB check
+    float max_extent = fmaxf(w1, h1) + fmaxf(w2, h2);
+    float dx = fabsf(x1 - x2);
+    float dy = fabsf(y1 - y2);
+    
+    if (dx > max_extent || dy > max_extent) {
         return false;
     }
     
@@ -841,21 +854,21 @@ void collide_with_obj(Player *player, int obj) {
 
     if (!hitbox) return;
 
-    //number_of_collisions_checks++;
+    number_of_collisions_checks++;
 
     float x = objects.x[obj];
     float y = objects.y[obj];
     float width = objects.width[obj];
     float height = objects.height[obj];
 
-    if (hitbox->type == COLLISION_CIRCLE) {
+    if (UNLIKELY(hitbox->type == COLLISION_CIRCLE)) {
         if (intersect_rect_circle(
             player->x, player->y, player->width, player->height, player->rotation, 
             x, y, hitbox->width
         )) {
             handle_collision(player, obj, hitbox);
             SET_COLLIDED(obj, true);
-            //number_of_collisions++;
+            number_of_collisions++;
         } else {
             SET_COLLIDED(obj, false);
         }
@@ -885,7 +898,7 @@ void collide_with_obj(Player *player, int obj) {
         if (checkColl) {
             handle_collision(player, obj, hitbox);
             SET_COLLIDED(obj, true);
-            //number_of_collisions++;
+            number_of_collisions++;
         } else {
             SET_COLLIDED(obj, false);
         }
@@ -923,9 +936,12 @@ int block_count = 0;
 int hazard_buffer[MAX_COLLIDED_OBJECTS];
 int hazard_count = 0;
 
+int number_of_collisions = 0;
+int number_of_collisions_checks = 0;
+
 void collide_with_objects(Player *player) {
-    //number_of_collisions = 0;
-    //number_of_collisions_checks = 0;
+    number_of_collisions = 0;
+    number_of_collisions_checks = 0;
 
     int sx = (int)(player->x / SECTION_SIZE);
     int sy = (int)(player->y / SECTION_SIZE);

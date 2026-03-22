@@ -206,7 +206,7 @@ void game_loop() {
 
             
             // Run simulation in fixed steps
-            while (accumulator >= STEPS_DT_UNMOD) {
+            while (accumulator >= STEPS_DT_UNMOD && steps < 4) {
                 u64 start_physics = svcGetSystemTick();
                 state.current_player = 0;
                 state.old_player = state.player;
@@ -233,20 +233,33 @@ void game_loop() {
                     if (state.dead) break;
                 }
                 
-                u64 end_physics = svcGetSystemTick();
-                float physics_time = (end_physics - start_physics) / (CPU_TICKS_PER_MSEC * 1000);
+                run_camera();
 
-                if (physics_time >= STEPS_DT_UNMOD) {
-                    frame_skipped = (int) (physics_time * STEPS_HZ);
+                u64 end_physics = svcGetSystemTick();
+                float physics_time = (end_physics - start_physics) / (CPU_TICKS_PER_MSEC);
+
+                if (physics_time / 1000 >= STEPS_DT_UNMOD) {
+                    frame_skipped = (int) (physics_time / 1000 * STEPS_HZ);
                 }
                 else frame_skipped = 0;
 
                 physics_calc_time += physics_time;
 
-                run_camera();
-                accumulator -= STEPS_DT;
+                accumulator -= STEPS_DT_UNMOD;
                 steps++;
                 level_frame++;
+            }
+
+            if (accumulator >= STEPS_DT_UNMOD) {
+                // Calculate how many steps we're behind
+                int missed_steps = (int)(accumulator / STEPS_DT_UNMOD);
+
+                frame_skipped = missed_steps;
+
+                // Fast-forward accumulator
+                accumulator -= missed_steps * STEPS_DT_UNMOD;
+            } else {
+                frame_skipped = 0;
             }
         }
         
@@ -333,6 +346,7 @@ void game_loop() {
             draw_text(bigFont_fontCharset, bigFont_sheet, 320-32, 54, 0.5f, 1.0, "%.2f%% Physics", physics_calc_time * 6);
             draw_text(bigFont_fontCharset, bigFont_sheet, 320-32, 66, 0.5f, 1.0, "%.2f%% Particle", particle_calc_time * 6);
             draw_text(bigFont_fontCharset, bigFont_sheet, 320-32, 78, 0.5f, 1.0, "%.2f%% Triggers", triggers_time * 6);
+            draw_text(bigFont_fontCharset, bigFont_sheet, 320-32, 90, 0.5f, 1.0, "%d/%d Collision", number_of_collisions, number_of_collisions_checks);
             draw_text(bigFont_fontCharset, bigFont_sheet, 0, 42, 0.5f, 0, "SprDraw:  %6.2f%%", (sprite_drawing_time) * 6);
             draw_text(bigFont_fontCharset, bigFont_sheet, 0, 54, 0.5f, 0, " - Creating: %6.2f%%", (object_creating_time) * 6);
             draw_text(bigFont_fontCharset, bigFont_sheet, 0, 66, 0.5f, 0, " - Sorting:  %6.2f%%", (object_sorting_time) * 6);

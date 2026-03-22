@@ -6,6 +6,9 @@
 
 #define DT (1.f/60)
 
+#define LIKELY(x)   __builtin_expect(!!(x), 1)
+#define UNLIKELY(x) __builtin_expect(!!(x), 0)
+
 extern float delta;
 extern unsigned int frame_counter;
 

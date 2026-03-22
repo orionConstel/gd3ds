@@ -16,6 +16,9 @@ enum JumpType {
     JUMP_TYPES_COUNT
 };
 
+extern int number_of_collisions;
+extern int number_of_collisions_checks;
+
 #define GET_ACTIVATED(obj) \
     ((objects.activated[(obj)] >> state.current_player) & 1)
 

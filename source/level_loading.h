@@ -4,9 +4,9 @@
 
 #define MAX_GROUPS_PER_OBJECT 20
 
-#define SECTION_HASH_SIZE 600
+#define SECTION_HASH_SIZE 1024
 
-#define SECTION_SIZE 100
+#define SECTION_SIZE 128
 
 typedef enum {
     GD_VAL_INT,
