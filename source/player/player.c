@@ -569,7 +569,7 @@ void spawn_p1_trail(Player *player) {
     trail_data->x = player->x;
     trail_data->y = player->y;
     trail_data->rot = player->lerp_rotation;
-    trail_data->opacity = 1.f;
+    trail_data->opacity = 0.7f;
     trail_data->life = P1_TRAIL_DURATION;
 
     trail_data->active = true;
@@ -590,7 +590,7 @@ void update_p1_trail(Player *player) {
         P1Trail *trail_data = &player->p1_trail_data[i];
 
         if (trail_data->active) {
-            trail_data->opacity -= (1.f / P1_TRAIL_DURATION) * delta;
+            trail_data->opacity -= (0.8f / P1_TRAIL_DURATION) * delta;
             trail_data->scale += trail_data->delta_scale * delta;
 
             trail_data->life -= delta;
