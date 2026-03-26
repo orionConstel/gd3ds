@@ -532,6 +532,8 @@ void handle_player(Player *player) {
     
     u64 end_player = svcGetSystemTick();
     ticks = end_player - start_player;
+
+    if (state.hitbox_display == 2) add_new_hitbox(player);
     handle_player_time += ticks / CPU_TICKS_PER_MSEC;
 }
 
@@ -717,5 +719,137 @@ void draw_player(Player *player) {
                 C2D_Color32(glow_color.r, glow_color.g, glow_color.b, 255)
             );
             break;
+    }
+}
+
+extern void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]);
+
+
+void draw_triangle_from_rect(Vec2D rect[4], int skip_index, uint32_t color) {
+    Vec2D tri[3];
+    int ti = 0;
+
+    // Collect 3 points that are not the skipped one
+    for (int i = 0; i < 4; ++i) {
+        if (i == skip_index) continue;
+        tri[ti].x = calc_x_on_screen(rect[i].x);
+        tri[ti++].y = calc_y_on_screen(rect[i].y);
+    }
+
+    draw_polygon_inward_mitered(tri, 3, 2.f, color);
+}
+
+void draw_square(Vec2D rect[4], uint32_t color) {
+    Vec2D center = {
+        (rect[0].x + rect[1].x + rect[2].x + rect[3].x) / 4.f,
+        (rect[0].y + rect[1].y + rect[2].y + rect[3].y) / 4.f
+    };
+
+    for (int i = 0; i < 4; i++) {
+        int j = (i + 1) % 4;
+
+        draw_hitbox_line_inward(rect,
+            calc_x_on_screen(rect[i].x), calc_y_on_screen(rect[i].y),
+            calc_x_on_screen(rect[j].x), calc_y_on_screen(rect[j].y),
+            1.5f, center.x, center.y, color
+        );
+    }
+}
+
+void draw_hitbox(int obj) {
+    const ObjectHitbox *hitbox = game_objects[objects.id[obj]].hitbox;
+
+    if (!hitbox) return;
+
+    float angle = objects.rotation[obj];
+
+    float x = objects.x[obj];
+    float y = objects.y[obj];
+    float w = hitbox->width;
+    float h = hitbox->height;
+
+    unsigned int color = C2D_Color32(0x00, 0xff, 0xff, 0xff);
+
+    int hitbox_type = hitbox->collision_type;
+    if (hitbox_type == HITBOX_HAZARD) color = C2D_Color32(0xff, 0x00, 0x00, 0xff);
+    if (hitbox_type == HITBOX_SOLID) color = C2D_Color32(0x00, 0x00, 0xff, 0xff);
+    if (hitbox_type == HITBOX_SPECIAL) color = C2D_Color32(0x00, 0xff, 0x00, 0xff);
+    
+    if (obj == state.player.slope_data.slope_id || obj == state.player2.slope_data.slope_id) color = C2D_Color32(0x00, 0xff, 0x00, 0xff);
+
+    Vec2D rect[4];
+    if (hitbox->type == COLLISION_SLOPE) {
+        w = objects.width[obj];
+        h = objects.height[obj];
+        get_corners(x, y, w, h, 0, rect);
+
+        draw_triangle_from_rect(rect, 3 - objects.orientation[obj], color);
+    } else if (hitbox->type == COLLISION_CIRCLE) {
+        //float calc_radius = hitbox->width;
+
+        //custom_circunference(calc_x_on_screen(x), calc_y_on_screen(y), calc_radius, color, 2.f);
+    } else if (w != 0 && h != 0) {
+        //if (hitbox_type == HITBOX_SPECIAL && !objects.touch_triggered[obj]) return;
+        get_corners(x, y, w, h, angle, rect);
+        draw_square(rect, color);
+    }
+}
+
+void draw_player_hitbox(Player *player) {
+    InternalHitbox internal = player->internal_hitbox;
+    Vec2D rect[4];
+    // Rotated hitbox
+    get_corners(player->x, player->y, player->width, player->height, player->rotation, rect);
+
+    draw_square(rect, C2D_Color32(0x7f, 0x00, 0x00, 0xff));
+
+    // Internal hitbox
+    get_corners(player->x, player->y, internal.width, internal.height, 0, rect);
+
+    draw_square(rect, C2D_Color32(0x00, 0x00, 0xff, 0xff));
+
+    // Circle hitbox
+    //float calc_radius = (player->width / 2) * SCALE;
+    //custom_circunference(calc_x_on_screen(player->x), calc_y_on_screen(player->y), calc_radius, C2D_Color32(0xff, 0x00, 0x00, 0xff), 2.f);
+
+    // Unrotated hitbox
+    get_corners(player->x, player->y, player->width, player->height, 0, rect);
+
+    draw_square(rect, C2D_Color32(0xff, 0x00, 0x00, 0xff));
+}
+
+
+void add_new_hitbox(Player *player) {
+    for (int i = HITBOX_TRAIL_SIZE - 2; i > 0; i--) {
+        state.hitbox_trail_players[state.current_player][i] = state.hitbox_trail_players[state.current_player][i - 1];
+    }
+    PlayerHitboxTrail hitbox;
+    hitbox.x = player->x;
+    hitbox.y = player->y;
+    hitbox.width = player->width;
+    hitbox.height = player->height;
+    hitbox.rotation = player->rotation;
+    hitbox.internal_hitbox = player->internal_hitbox;
+
+    state.hitbox_trail_players[state.current_player][0] = hitbox;
+
+    state.last_hitbox_trail++;
+
+    if (state.last_hitbox_trail >= HITBOX_TRAIL_SIZE) state.last_hitbox_trail = HITBOX_TRAIL_SIZE - 1;
+}
+
+void draw_hitbox_trail(int player) {
+    for (int i = state.last_hitbox_trail - 1; i >= 0; i--) {
+        PlayerHitboxTrail hitbox = state.hitbox_trail_players[player][i];
+
+        Player player;
+        player.x = hitbox.x;
+        player.y = hitbox.y;
+        player.width = hitbox.width;
+        player.height = hitbox.height;
+        player.internal_hitbox = hitbox.internal_hitbox;
+        player.rotation = hitbox.rotation;
+
+        draw_player_hitbox(&player);
     }
 }

@@ -601,7 +601,7 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
     if (!GET_COLLIDED(obj)) SET_HITBOX_COUNTER(obj, GET_HITBOX_COUNTER(obj) + 1); 
 }
 
-static inline void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]) {
+void get_corners(float cx, float cy, float w, float h, float angle, Vec2D out[4]) {
     float hw = w * 0.5f, hh = h * 0.5f;
     angle = -angle;
     float rad = C3D_AngleFromDegrees(angle);

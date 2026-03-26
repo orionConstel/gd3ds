@@ -4,6 +4,20 @@
 
 #include <float.h>
 
+Vec2D normalize(Vec2D v) {
+    float len = sqrtf(v.x*v.x + v.y*v.y);
+    return (Vec2D){ v.x / len, v.y / len };
+}
+
+float dot_vec(Vec2D a, Vec2D b) {
+    return a.x * b.x + a.y * b.y;
+}
+
+Vec2D perpendicular(Vec2D v) {
+    return (Vec2D){ -v.y, v.x };
+}
+
+
 float clampf(float d, float min, float max) {
     const float t = d < min ? min : d;
     return t > max ? max : t;

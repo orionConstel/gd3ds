@@ -5,6 +5,7 @@
 #include "graphics.h"
 
 #define MAX_LEVEL_HEIGHT 2400.f
+#define HITBOX_TRAIL_SIZE 64
 
 typedef struct {
     float x;
@@ -75,12 +76,9 @@ typedef struct {
 
     float timer;
     float death_timer;
-    /*
-    Particle particles[MAX_PARTICLES];
 
     int last_hitbox_trail;
     PlayerHitboxTrail hitbox_trail_players[2][HITBOX_TRAIL_SIZE];
-    */
 
     KeyInput input;
 } GameState;

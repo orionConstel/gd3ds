@@ -185,3 +185,8 @@ inline float obj_gravTop(Player *player, int object) { return player->upside_dow
 void handle_player(Player *player);
 void draw_player(Player *player);
 void run_player(Player *player);
+
+void draw_hitbox(int obj);
+void draw_player_hitbox(Player *player);
+void draw_hitbox_trail(int player);
+void add_new_hitbox(Player *player);

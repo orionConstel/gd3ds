@@ -1,6 +1,7 @@
 #pragma once
 #include <citro2d.h>
 #include "color_channels.h"
+#include "player/collision.h"
 
 #define RGBA8(r, g, b, a) (a | (b << (u32)8) | (g << (u32)16) | (r << (u32)24))
 #define ABGR8(r, g, b, a) (r | (g << (u32)8) | (b << (u32)16) | (a << (u32)24))
@@ -17,6 +18,9 @@
 
 #define STEPS_HZ 240
 
+Vec2D normalize(Vec2D v);
+float dot_vec(Vec2D a, Vec2D b);
+Vec2D perpendicular(Vec2D v);
 float clampf(float d, float min, float max);
 float positive_fmodf(float n, float divisor);
 Color color_lerp(Color color1, Color color2, float fraction);

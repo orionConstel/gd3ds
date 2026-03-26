@@ -185,13 +185,18 @@ void game_loop() {
         if (kDown & KEY_X)
             state.noclip ^= 1;
 
+        if (kDown & KEY_Y) {
+            state.hitbox_display++;
+            if (state.hitbox_display > 2) state.hitbox_display = 0;
+        }      
+
         int steps = 0;
 
         u32 kHeld = hidKeysHeld();
         // Compare with true to store it in a single bit
         state.input.pressedJump = ((kDown & KEY_A) || (kDown & KEY_TOUCH)) == true;
         state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (kHeld & KEY_TOUCH)) == true;
-        if (state.death_timer <= 0 && !(kHeld & KEY_Y))  {
+        if (state.death_timer <= 0)  {
             physics_calc_time = 0;
             number_of_collisions = 0;
             number_of_collisions_checks = 0;

@@ -2,6 +2,7 @@
 #include "math_helpers.h"
 #include "graphics.h"
 #include "main.h"
+#include "state.h"
 
 void set_scissor(GPU_SCISSORMODE mode, int x, int y, int width, int height) {
     int screen_width = GSP_SCREEN_HEIGHT_BOTTOM;
@@ -242,4 +243,146 @@ bool C2D_DrawTriangleUV(float x0, float y0, float u0, float v0, u32 clr0, float 
 	C2Di_AppendVtx(x1, y1, depth, u1, v1, 0, 1.f, clr1);
 	C2Di_AppendVtx(x2, y2, depth, u2, v2, 0, 1.f, clr2);
 	return true;
+}
+
+float calc_x_on_screen(float val) {
+    return get_mirror_x(val - state.camera_x, state.mirror_factor);
+    
+}
+float calc_y_on_screen(float val) {
+    return SCREEN_HEIGHT - ((val - state.camera_y));
+}
+
+
+bool is_ccw(Vec2D *poly, int n) {
+    float sum = 0.0f;
+    for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+        sum += (poly[j].x - poly[i].x) * (poly[j].y + poly[i].y);
+    }
+    return sum < 0.0f; // CCW if sum < 0
+}
+
+void compute_mitered_offsets(Vec2D *poly, Vec2D *offsets, int n, float thickness, bool ccw) {
+    for (int i = 0; i < n; i++) {
+        int prev = (i + n - 1) % n;
+        int next = (i + 1) % n;
+
+        // Edge vectors
+        Vec2D e_prev = { poly[i].x - poly[prev].x, poly[i].y - poly[prev].y };
+        Vec2D e_next = { poly[next].x - poly[i].x, poly[next].y - poly[i].y };
+
+        // Normals
+        Vec2D n_prev = normalize(perpendicular(e_prev));
+        Vec2D n_next = normalize(perpendicular(e_next));
+
+        // Flip to point inward if mirror
+        if (state.mirror_factor < 0.5f) { n_prev.x = -n_prev.x; n_prev.y = -n_prev.y; n_next.x = -n_next.x; n_next.y = -n_next.y; }
+
+        // Miter = normalize(n_prev + n_next)
+        Vec2D miter = normalize((Vec2D){ n_prev.x + n_next.x, n_prev.y + n_next.y });
+
+        // Compute miter length to preserve thickness
+        float cos_half_angle = dot_vec(miter, n_next); // cos(theta/2)
+        float miter_length = thickness / cos_half_angle;
+
+        offsets[i].x = poly[i].x + miter.x * miter_length;
+        offsets[i].y = poly[i].y + miter.y * miter_length;
+    }
+}
+
+void draw_polygon_inward_mitered(Vec2D *poly, int n, float thickness, u32 color) {
+    bool ccw = is_ccw(poly, n);
+
+    Vec2D offsets[n];
+    compute_mitered_offsets(poly, offsets, n, thickness, ccw);
+
+    for (int i = 0; i < n; i++) {
+        int j = (i + 1) % n;
+
+        float x1 = poly[i].x;
+        float y1 = poly[i].y;
+        float x2 = poly[j].x;
+        float y2 = poly[j].y;
+
+        float ox1 = offsets[i].x;
+        float oy1 = offsets[i].y;
+        float ox2 = offsets[j].x;
+        float oy2 = offsets[j].y;
+
+        // Triangle 1
+        C2D_DrawTriangle(
+            x1, y1, color,
+            x2, y2, color,
+            ox2, oy2, color,
+            0.0f
+        );
+
+        // Triangle 2
+        C2D_DrawTriangle(
+            ox2, oy2, color,
+            ox1, oy1, color,
+            x1, y1, color,
+            0.0f
+        );
+    }
+}
+
+void draw_hitbox_line_inward(Vec2D rect[4], 
+                             const float x1, const float y1,
+                             const float x2, const float y2,
+                             const float thickness,
+                             const float cx, const float cy,
+                             const u32 color) {
+
+    float ex = x2 - x1;
+    float ey = y2 - y1;
+    float length = sqrtf(ex * ex + ey * ey);
+
+    // Inward normal depends on winding
+    float nx, ny;
+    if (is_ccw(rect, 4)) {
+        nx = -ey / length;
+        ny =  ex / length;
+    } else {
+        nx =  ey / length;
+        ny = -ex / length;
+    }
+
+    // Flip it to point inward if not mirror
+    if (state.mirror_factor < 0.5f) {
+        nx = -nx;
+        ny = -ny;
+    }
+
+    // Offset inward
+    float ox = nx * thickness;
+    float oy = ny * thickness;
+
+    // Build quad
+    float x1a = x1;
+    float y1a = y1;
+    float x2a = x2;
+    float y2a = y2;
+
+    float x1b = x1 + ox;
+    float y1b = y1 + oy;
+    float x2b = x2 + ox;
+    float y2b = y2 + oy;
+
+    // First triangle
+    C2D_DrawTriangle(
+        x1a, y1a, color,
+        x2a, y2a, color,
+        x2b, y2b, color,
+        0.0f
+    );
+
+    // Second triangle
+    C2D_DrawTriangle(
+        x2b, y2b, color,
+        x1b, y1b, color,
+        x1a, y1a, color,
+        0.0f
+    );
 }

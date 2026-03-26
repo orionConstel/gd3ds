@@ -1028,6 +1028,24 @@ void draw_objects() {
             }          
         }
     }
+
+    if (state.hitbox_display) {
+        for (size_t s = 0; s < sprite_count; s++) {
+            SpriteObject *obj = viewable_objects_ptr[s];
+            if (obj->obj != -1)     
+                draw_hitbox(obj->obj);
+            else {
+                draw_player_hitbox(&state.player);
+                if (state.hitbox_display == 2) draw_hitbox_trail(0);
+                
+                if (state.dual) {
+                    draw_player_hitbox(&state.player2);
+                    if (state.hitbox_display == 2) draw_hitbox_trail(1);
+                }
+            }
+        }
+    }
+
     u64 end = svcGetSystemTick();
     u64 ticks = end - start;
     object_drawing_time = ticks / CPU_TICKS_PER_MSEC;

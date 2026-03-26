@@ -3,6 +3,7 @@
 #include <citro2d.h>
 
 #include <math.h>
+#include "player/collision.h"
 
 #define FADE_DURATION 0.25f
 #define FADE_SPEED (255 / FADE_DURATION)
@@ -12,6 +13,17 @@ enum FadeStatus {
     FADE_STATUS_OUT,
     FADE_STATUS_IN
 };
+void draw_hitbox_line_inward(Vec2D rect[4], 
+                             const float x1, const float y1,
+                             const float x2, const float y2,
+                             const float thickness,
+                             const float cx, const float cy,
+                             const u32 color);
+
+void draw_polygon_inward_mitered(Vec2D *poly, int n, float thickness, u32 color); 
+
+float calc_x_on_screen(float val);
+float calc_y_on_screen(float val);
 
 // Fading
 bool handle_fading();
