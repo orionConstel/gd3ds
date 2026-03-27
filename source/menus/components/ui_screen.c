@@ -368,7 +368,7 @@ void ui_load_screen(UIScreen* screen,
         if (strcmp(type, "button") == 0) {
             screen->elements[screen->count++] =
                 ui_create_button(
-                    x, y, sx, sy, id, sheet,
+                    x, y, sx, sy, id, sheet, opacity,
                     ui_find_action(actions, actionCount, actionName),
                     text,
                     tag

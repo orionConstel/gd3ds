@@ -35,10 +35,17 @@ const float player_speeds[SPEED_COUNT] = {
 };
 
 const float cube_jump_heights[SPEED_COUNT] = {
-    573.48,
-    603.72,
-    616.68,
-    606.42,
+    573.481728,
+    603.7217172,
+    616.681728,
+    606.421728,
+};
+
+const float cube_accelerations[] = {
+    -2747.52,
+    -2794.1082,
+    -2786.4,
+    -2799.36,
 };
 
 const float slopeHeights[SPEED_COUNT] = {
@@ -62,8 +69,8 @@ void cube_gamemode(Player *player) {
     trail->positionR = (Vec2){player->x, player->y};  
     trail->startingPositionInitialized = true;
 
-    player->gravity = -2794.1082;
-    
+    player->gravity = cube_accelerations[state.speed];
+
     if (player->vel_y < -810) player->vel_y = -810;
     if (player->vel_y > 1080) player->vel_y = 1080;
 

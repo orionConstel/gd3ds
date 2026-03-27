@@ -72,6 +72,8 @@ typedef struct {
 
     bool paused;
 
+    bool profiling;
+
     float level_progress;
 
     float timer;

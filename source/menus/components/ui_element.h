@@ -149,7 +149,6 @@ typedef struct {
 typedef struct {
     C2D_Sprite sprite;
     C2D_ImageTint tint;
-    float opacity;
 } UIDarken;
 
 typedef struct UIElement UIElement;
@@ -174,6 +173,8 @@ struct UIElement {
 
     float x, y;
     int w, h;
+
+    float opacity;
 
     bool enabled;
 

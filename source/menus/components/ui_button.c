@@ -68,10 +68,14 @@ static void ui_button_update(UIElement* e, UIInput* touch) {
 static void ui_button_draw(UIElement* e) {
     float scale = e->button.hoverScale;
 
+    C2D_ImageTint tint;
+
+    C2D_PlainImageTint(&tint, C2D_Color32f(1, 1, 1, e->opacity), 1.f);
+
     C2D_SpriteSetCenter(&e->button.image.sprite, 0.5f, 0.5f);
     C2D_SpriteSetPos(&e->button.image.sprite, e->x, e->y);
     C2D_SpriteSetScale(&e->button.image.sprite, scale * e->button.scaleX, scale * e->button.scaleY);
-    C2D_DrawSprite(&e->button.image.sprite);
+    C2D_DrawSpriteTinted(&e->button.image.sprite, &tint);
 
     // Get text length in pixels
     float length = get_text_length(bigFont_fontCharset, 1 / 0.85f, "%s", e->button.text);
@@ -98,7 +102,7 @@ void ui_button_set_image(UIElement *e, int sprite_index, int sheet) {
 }
 
 UIElement ui_create_button(
-    int x, int y, float sx, float sy, int sprite_index, int sheet, 
+    int x, int y, float sx, float sy, int sprite_index, int sheet, float opacity,
     UIActionFn action,
     char *text,
     char (*tag)[TAG_LENGTH]
@@ -110,7 +114,8 @@ UIElement ui_create_button(
         .enabled = true,
         .action = action,
         .update = ui_button_update,
-        .draw = ui_button_draw
+        .draw = ui_button_draw,
+        .opacity = opacity
     };
 
     // Copy tag

@@ -23,7 +23,7 @@ UIElement ui_create_darken(float opacity, char (*tag)[TAG_LENGTH]) {
     e.x = 0;
     e.y = 0;
     e.enabled = true;
-    e.darken.opacity = opacity;
+    e.opacity = opacity;
 
     // Copy tag
     copy_tag_array(&e, tag);

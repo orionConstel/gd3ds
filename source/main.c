@@ -22,6 +22,7 @@
 #include "menus/main_menu.h"
 #include "menus/level_select.h"
 #include "menus/icon_kit.h"
+#include "menus/gameplay.h"
 #include "menus/components/ui_screen.h"
 
 #include "player/collision.h"
@@ -33,6 +34,7 @@
 #include <stdarg.h>
 
 #include "player/player.h"
+
 
 #define CITRA_TYPE 0x20000
 #define CITRA_VERSION 11
@@ -160,6 +162,7 @@ void game_loop() {
 
     init_op_system();
     initParticleSystem(&drag_particles, &drag_effect);
+    gameplay_screen_init();
 
     drag_particles.cfg.startColorRed   = get_white_if_black(p1_color).r / 255.f;
     drag_particles.cfg.startColorGreen = get_white_if_black(p1_color).g / 255.f;
@@ -174,6 +177,9 @@ void game_loop() {
     while (aptMainLoop()) {
         start = svcGetSystemTick();
         hidScanInput();
+        
+        touchPosition touchPos;
+        hidTouchRead(&touchPos);
 
         // Respond to user input
         u32 kDown = hidKeysDown();
@@ -185,6 +191,9 @@ void game_loop() {
         if (kDown & KEY_X)
             state.noclip ^= 1;
 
+        if (kDown & KEY_L)
+            state.profiling ^= 1;
+
         if (kDown & KEY_Y) {
             state.hitbox_display++;
             if (state.hitbox_display > 2) state.hitbox_display = 0;
@@ -193,9 +202,11 @@ void game_loop() {
         int steps = 0;
 
         u32 kHeld = hidKeysHeld();
+
+        bool in_bounds = touchPos.px < 320 - 30 || touchPos.py > 30;
         
-        state.input.pressedJump = ((kDown & KEY_A) || (kDown & KEY_TOUCH)) == true;
-        state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (kHeld & KEY_TOUCH)) == true;
+        state.input.pressedJump = ((kDown & KEY_A) || (in_bounds && (kDown & KEY_TOUCH))) == true;
+        state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (in_bounds && (kHeld & KEY_TOUCH))) == true;
         if (state.death_timer <= 0)  {
             physics_calc_time = 0;
             number_of_collisions = 0;
@@ -300,7 +311,6 @@ void game_loop() {
         u64 end = svcGetSystemTick();
         u64 ticks = end - start;
 
-
         // Render the scene
         do {
             C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
@@ -329,27 +339,31 @@ void game_loop() {
             C2D_SceneBegin(bot);
             C2D_TargetClear(bot, C2D_Color32(0, 0, 0, 255));
 
-            float processingTime = ((ticks / CPU_TICKS_PER_MSEC)) * 6;
-            float drawingTime = C3D_GetDrawingTime() * 6;
+            gameplay_screen_loop();
 
-            #define DEBUG_TEXT_SCALE 0.4f
-            
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0, 6,  DEBUG_TEXT_SCALE, 0, "CPU: %6.2f%% (%6.2f%% %6.2f%%)", (C3D_GetProcessingTime() * 6) + processingTime, C3D_GetProcessingTime() * 6, processingTime);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0, 18, DEBUG_TEXT_SCALE, 0, "GPU: %6.2f%%", drawingTime);
+            if (state.profiling) {
+                float processingTime = ((ticks / CPU_TICKS_PER_MSEC)) * 6;
+                float drawingTime = C3D_GetDrawingTime() * 6;
 
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 42,  DEBUG_TEXT_SCALE, 0, "%d steps", steps);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 54,  DEBUG_TEXT_SCALE, 0, "Particle: %6.2f%%", particle_calc_time * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 66,  DEBUG_TEXT_SCALE, 0, "Triggers: %6.2f%%", triggers_time * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 78,  DEBUG_TEXT_SCALE, 0, "Collision %d/%d", number_of_collisions, number_of_collisions_checks);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 90,  DEBUG_TEXT_SCALE, 0, "Physics: %6.2f%%", physics_calc_time * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 102, DEBUG_TEXT_SCALE, 0, " - Coll: %6.2f%%", collision_time * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 114, DEBUG_TEXT_SCALE, 0, " - Play: %6.2f%%", player_time * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 180, 126, DEBUG_TEXT_SCALE, 0, " - Hndl: %6.2f%%", handle_player_time * 6);
+                #define DEBUG_TEXT_SCALE 0.4f
+                
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0, 6,  DEBUG_TEXT_SCALE, 0, "CPU: %6.2f%% (%6.2f%% %6.2f%%)", (C3D_GetProcessingTime() * 6) + processingTime, C3D_GetProcessingTime() * 6, processingTime);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0, 18, DEBUG_TEXT_SCALE, 0, "GPU: %6.2f%%", drawingTime);
 
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0,   42,  DEBUG_TEXT_SCALE, 0, "SprDraw:  %6.2f%%", (sprite_drawing_time) * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0,   54,  DEBUG_TEXT_SCALE, 0, " - Creating: %6.2f%%", (object_creating_time) * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0,   66,  DEBUG_TEXT_SCALE, 0, " - Sorting:  %6.2f%%", (object_sorting_time) * 6);
-            draw_text(bigFont_fontCharset, bigFont_sheet, 0,   90,  DEBUG_TEXT_SCALE, 0, "Drawing:  %6.2f%%", (object_drawing_time) * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 42,  DEBUG_TEXT_SCALE, 0, "%d steps", steps);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 54,  DEBUG_TEXT_SCALE, 0, "Particle: %6.2f%%", particle_calc_time * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 66,  DEBUG_TEXT_SCALE, 0, "Triggers: %6.2f%%", triggers_time * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 78,  DEBUG_TEXT_SCALE, 0, "Collision %d/%d", number_of_collisions, number_of_collisions_checks);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 90,  DEBUG_TEXT_SCALE, 0, "Physics: %6.2f%%", physics_calc_time * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 102, DEBUG_TEXT_SCALE, 0, " - Coll: %6.2f%%", collision_time * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 114, DEBUG_TEXT_SCALE, 0, " - Play: %6.2f%%", player_time * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 180, 126, DEBUG_TEXT_SCALE, 0, " - Hndl: %6.2f%%", handle_player_time * 6);
+
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0,   42,  DEBUG_TEXT_SCALE, 0, "SprDraw:  %6.2f%%", (sprite_drawing_time) * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0,   54,  DEBUG_TEXT_SCALE, 0, " - Creating: %6.2f%%", (object_creating_time) * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0,   66,  DEBUG_TEXT_SCALE, 0, " - Sorting:  %6.2f%%", (object_sorting_time) * 6);
+                draw_text(bigFont_fontCharset, bigFont_sheet, 0,   90,  DEBUG_TEXT_SCALE, 0, "Drawing:  %6.2f%%", (object_drawing_time) * 6);
+            }
 
             if (state.noclip) {
                 draw_text(bigFont_fontCharset, bigFont_sheet, 0, 234, 0.5f, 0, "Noclip Activated");
