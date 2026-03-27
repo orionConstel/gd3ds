@@ -311,5 +311,57 @@ void spawn_object_particles(int obj) {
                 }
             }
             break;
+        case SLOW_SPEED_PORTAL:
+            if (!is_ps_already_loaded(obj))
+            {
+                index = load_object_particles(obj, &boost_01_effect, false);
+                if (index >= 0)
+                {
+                    set_particle_color(&object_particle[index].ps.cfg, 1, 1, 0);
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case NORMAL_SPEED_PORTAL:
+            if (!is_ps_already_loaded(obj))
+            {
+                index = load_object_particles(obj, &boost_02_effect, false);
+                if (index >= 0)
+                {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 0.75f, 1);
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case FAST_SPEED_PORTAL:
+            if (!is_ps_already_loaded(obj))
+            {
+                index = load_object_particles(obj, &boost_03_effect, false);
+                if (index >= 0)
+                {
+                    set_particle_color(&object_particle[index].ps.cfg, 0, 1, 0);
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
+        case FASTER_SPEED_PORTAL:
+            if (!is_ps_already_loaded(obj))
+            {
+                index = load_object_particles(obj, &boost_04_effect, false);
+                if (index >= 0)
+                {
+                    set_particle_color(&object_particle[index].ps.cfg, 0.9f, 0.25f, 1);
+                    object_particle[index].ps.cfg.angle = -(adjust_angle_y(objects.rotation[obj], objects.flippedH[obj]));
+                    object_particle[index].ps.emitterX = objects.x[obj];
+                    object_particle[index].ps.emitterY = objects.y[obj];
+                }
+            }
+            break;
     }
 }
