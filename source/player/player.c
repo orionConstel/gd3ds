@@ -179,11 +179,11 @@ void ship_gamemode(Player *player) {
     float calc_x = player->x - state.camera_x;
     float calc_y = SCREEN_HEIGHT - (fabsf(gravBottom(player)) - state.camera_y);
 
-    ship_fire_particles[state.current_player].emitterX = getLeft(player) + 2;
-    ship_fire_particles[state.current_player].emitterY = fabsf(gravBottom(player)) + (player->upside_down ? -6 : 6);
+    ship_fire_particles[state.current_player].emitterX = x;
+    ship_fire_particles[state.current_player].emitterY = y;
     ship_fire_particles[state.current_player].emitting = false;
 
-    // ship_fire_particles[state.current_player].gravityFlipped = true;
+    ship_fire_particles[state.current_player].gravityFlipped = player->upside_down;
     ship_fire_particles[state.current_player].scale = (player->mini ? 0.6f : 1.0f);
 
 

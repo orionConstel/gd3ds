@@ -202,13 +202,13 @@ void game_loop() {
     ufo_secondary_particles[1].cfg.startColorGreen = p1_not_white.g / 255.f;
     ufo_secondary_particles[1].cfg.startColorBlue  = p1_not_white.b / 255.f;
 
-    // ship_fire_particles[0].cfg.startColorRed   = 255.f;
-    // ship_fire_particles[0].cfg.startColorGreen = 65.f;
-    // ship_fire_particles[0].cfg.startColorBlue  = 0.f;
+    ship_fire_particles[0].cfg.startColorRed   = 255.f / 255.f;
+    ship_fire_particles[0].cfg.startColorGreen = 65.f / 255.f;
+    ship_fire_particles[0].cfg.startColorBlue  = 0.f / 255.f;
 
-    // ship_fire_particles[1].cfg.startColorRed   = 255.f;
-    // ship_fire_particles[1].cfg.startColorGreen = 65.f;
-    // ship_fire_particles[1].cfg.startColorBlue  = 0.f;
+    ship_fire_particles[1].cfg.startColorRed   = 255.f / 255.f;
+    ship_fire_particles[1].cfg.startColorGreen = 65.f / 255.f;
+    ship_fire_particles[1].cfg.startColorBlue  = 0.f / 255.f;
 
     drag_particles[1].cfg.startColorRed   = p2_not_white.r / 255.f;
     drag_particles[1].cfg.startColorGreen = p2_not_white.g / 255.f;
