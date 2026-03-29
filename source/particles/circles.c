@@ -67,15 +67,18 @@ void update_use_effects(float delta) {
     for (size_t i = 0; i < MAX_USE_EFFECTS; i++) {
         UseEffect *effect = &use_effects[i];
         if (effect->active) {
+            float opacity;
             if (effect->def.trifading) {
                 if ((effect->elapsed / effect->def.duration) < 0.5f) {
-                    effect->opacity = easeValue(EASE_IN, effect->def.start_opacity, effect->def.end_opacity, effect->elapsed, effect->def.duration / 2, 2.f);
+                    opacity = easeValue(EASE_LINEAR, effect->def.start_opacity, effect->def.end_opacity, effect->elapsed, effect->def.duration / 2, 2.f);
                 } else {
-                    effect->opacity = easeValue(EASE_OUT, effect->def.end_opacity, effect->def.start_opacity, effect->elapsed - (effect->def.duration / 2), effect->def.duration / 2, 2.f);
+                    opacity = easeValue(EASE_LINEAR, effect->def.end_opacity, effect->def.start_opacity, effect->elapsed - (effect->def.duration / 2), effect->def.duration / 2, 2.f);
                 }
             } else {
-                effect->opacity = easeValue(EASE_OUT, effect->def.start_opacity, effect->def.end_opacity, effect->elapsed, effect->def.duration, 2.f);
+                opacity = easeValue(EASE_LINEAR, effect->def.start_opacity, effect->def.end_opacity, effect->elapsed, effect->def.duration, 2.f);
             }
+
+            effect->opacity = get_opacity(opacity);
 
             effect->rad = easeValue(EASE_OUT, effect->def.start_rad, effect->def.end_rad, effect->elapsed, effect->def.duration, 2.f);
 

@@ -47,6 +47,33 @@ int current_pulserod_ball_image = 0;
 
 SpriteTemplate sprite_templates[GAME_OBJECT_COUNT]; // global cache
 
+#define LUT_SIZE 256
+
+uint8_t opacityLUT[LUT_SIZE];
+
+void make_opacity_lut() {
+    for (int i = 0; i < LUT_SIZE; i++) {
+        float x = (float)i / (LUT_SIZE - 1);  // normalize to [0,1]
+
+        float y = 0.175656971639325f * powf(7.06033051530761f, x)
+                - 0.213355914301931f;
+
+        // clamp
+        if (y < 0.0f) y = 0.0f;
+        if (y > 1.0f) y = 1.0f;
+
+        opacityLUT[i] = (uint8_t)(y * 255.0f + 0.5f);
+    }
+}
+
+float get_opacity(float opacity) {
+    int index = (int)(opacity * 255.0f + 0.5f);
+    index = index < 0 ? 0 : (index > 255 ? 255 : index);
+
+    uint8_t result = opacityLUT[index];
+    return result / 255.f;
+}
+
 static C2D_SpriteSheet *get_sprite_sheet(int index, int *rel_index) {
     if (index < SPRITESHEET2_START) {
         *rel_index = index;
@@ -631,7 +658,7 @@ float get_out_scale_fade(float x, int right_edge) {
     return 1 + ((fade / 255.f) / 2);
 }
 
-int get_opacity(int obj, float x) {
+int get_obj_opacity(int obj, float x) {
     int opacity = obj_edge_fade(x, SCREEN_WIDTH / SCALE);
 
     switch (objects.id[obj]) {
@@ -962,7 +989,7 @@ void create_objects() {
                 opacity *= get_fading_obj_fade(x, SCREEN_WIDTH / SCALE);
             }
             
-            C2D_PlainImageTint(&obj->tint, C2D_Color32(col.color.r, col.color.g, col.color.b, get_opacity(game_object, x) * opacity), 1.f);
+            C2D_PlainImageTint(&obj->tint, C2D_Color32(col.color.r, col.color.g, col.color.b, get_obj_opacity(game_object, x) * opacity), 1.f);
         }
     }
 }

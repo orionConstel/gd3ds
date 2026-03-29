@@ -167,6 +167,8 @@ void game_loop() {
 
     init_variables();
 
+    make_opacity_lut();
+
     init_op_system();
 
     gameplay_screen_init();

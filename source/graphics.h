@@ -146,3 +146,6 @@ void spawn_p1_layer_at(
     u32 p1_color
 );
 void handle_mirror_transition();
+
+void make_opacity_lut();
+float get_opacity(float opacity);
