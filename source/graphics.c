@@ -1118,6 +1118,9 @@ void update_touch_effect(float delta) {
                 effect->def.colorB = p1_not_white.b / 255.f;
             }
         }
+
+        // Flip for particles
+        pos.py = SCREEN_HEIGHT - pos.py;
         
         touch_particles.emitterX = pos.px;
         touch_particles.emitterY = pos.py;

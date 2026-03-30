@@ -475,6 +475,9 @@ void drawParticleSystem(ParticleSystem* ps, float x_offset, float y_offset, floa
 
             // Apply mirror
             x = get_mirror_x(x, state.mirror_factor);
+        } else {
+            // Flip
+            y = GSP_SCREEN_WIDTH - y;
         }
 
         // Draw centered square
