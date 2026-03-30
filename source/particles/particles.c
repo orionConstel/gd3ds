@@ -472,13 +472,16 @@ void drawParticleSystem(ParticleSystem* ps, float x_offset, float y_offset, floa
                 x += ps->emitterX;
                 y += ps->emitterY;
             }
+
+            // Apply mirror
+            x = get_mirror_x(x, state.mirror_factor);
         }
 
         // Draw centered square
         float half = size * 0.5f;
 
         C2D_DrawRectSolid(
-            get_mirror_x(x, state.mirror_factor) - half + x_offset,
+            x - half + x_offset,
             y - half + y_offset,
             0.0f,
             size,
