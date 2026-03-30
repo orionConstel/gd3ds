@@ -66,7 +66,7 @@ const UseEffectDefinition orb_collide_effect = {
     .end_opacity_ease = EASE_OUT,
     .start_rad_ease = EASE_OUT,
     .end_rad_ease = EASE_OUT,
-    .line_thickness = 2.f
+    .line_thickness = 1.f
 };
 UseEffect use_effects_top[MAX_USE_EFFECTS];
 UseEffect use_effects_bot[MAX_USE_EFFECTS];
