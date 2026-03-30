@@ -20,6 +20,8 @@ typedef struct {
     bool trifading;
     bool hollow;
 
+    float line_thickness;
+
     EaseTypes start_rad_ease;
     EaseTypes end_rad_ease;
     EaseTypes start_opacity_ease;
