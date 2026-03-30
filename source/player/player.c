@@ -100,15 +100,6 @@ void cube_gamemode(Player *player) {
     drag_particles[state.current_player].gravityFlipped = player->upside_down;
     drag_particles[state.current_player].scale = (player->mini ? 0.6f : 1.0f);
     
-
-    if (!state.old_player.on_ground && player->on_ground) {
-        land_particles[state.current_player].emitterX = player->x;
-        land_particles[state.current_player].emitterY = fabsf(gravBottom(player)) + (player->upside_down ? -4 : 4);
-        land_particles[state.current_player].gravityFlipped = player->upside_down;
-        land_particles[state.current_player].scale = (player->mini ? 0.6f : 1.0f);
-        spawnMultipleParticles(&land_particles[state.current_player], 10);
-    }
-    
     if (player->on_ground) {
         MotionTrail_StopStroke(trail);
         update_rotation_direction(player);
@@ -452,6 +443,15 @@ void run_player(Player *player) {
             } 
             player->time_since_ground = 0; 
         } 
+    }
+    
+    // Handle land particles
+    if (!state.old_player.on_ground && player->on_ground) {
+        land_particles[state.current_player].emitterX = player->x;
+        land_particles[state.current_player].emitterY = fabsf(gravBottom(player)) + (player->upside_down ? -4 : 4);
+        land_particles[state.current_player].gravityFlipped = player->upside_down;
+        land_particles[state.current_player].scale = (player->mini ? 0.6f : 1.0f);
+        spawnMultipleParticles(&land_particles[state.current_player], 10);
     }
 
     switch (player->gamemode) {
