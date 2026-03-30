@@ -30,6 +30,7 @@ ParticleSystem ship_secondary_particles[2];
 ParticleSystem secondary_particles[2];
 ParticleSystem burst_particles[2];
 ParticleSystem land_particles[2];
+ParticleSystem glitter_particles;
 
 
 int frame_skipped = 0;
@@ -459,6 +460,9 @@ void run_player(Player *player) {
             cube_gamemode(player);
             break;
         case GAMEMODE_SHIP:
+            glitter_particles.emitterX = state.camera_x_middle;
+            glitter_particles.emitterY = state.camera_y_middle;
+            glitter_particles.emitting = true;
             MotionTrail_ResumeStroke(trail);
             ship_gamemode(player);
             break;
@@ -466,10 +470,16 @@ void run_player(Player *player) {
             ball_gamemode(player);
             break;
         case GAMEMODE_BIRD:
+            glitter_particles.emitterX = state.camera_x_middle;
+            glitter_particles.emitterY = state.camera_y_middle;
+            glitter_particles.emitting = true;
             MotionTrail_ResumeStroke(trail);
             ufo_gamemode(player);
             break;
         case GAMEMODE_DART:
+            glitter_particles.emitterX = state.camera_x_middle;
+            glitter_particles.emitterY = state.camera_y_middle;
+            glitter_particles.emitting = true;
             MotionTrail_ResumeStroke(trail);
             wave_gamemode(player);
             break;

@@ -156,6 +156,7 @@ extern ParticleSystem ship_secondary_particles[2];
 extern ParticleSystem secondary_particles[2];
 extern ParticleSystem burst_particles[2];
 extern ParticleSystem land_particles[2];
+extern ParticleSystem glitter_particles;
 
 extern const float player_speeds[SPEED_COUNT];
 

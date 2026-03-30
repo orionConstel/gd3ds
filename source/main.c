@@ -196,6 +196,7 @@ void game_loop() {
     initParticleSystem(&land_particles[1], &land_effect);
 
     initParticleSystem(&brick_destroy_particles, &glass_destroy_01);
+    initParticleSystem(&glitter_particles, &glitter_effect);
     
     Color p1_not_white = get_white_if_black(p1_color);
     Color p2_not_white = get_white_if_black(p2_color);
@@ -247,6 +248,10 @@ void game_loop() {
     land_particles[1].cfg.startColorRed   = p2_not_white.r / 255.f;
     land_particles[1].cfg.startColorGreen = p2_not_white.g / 255.f;
     land_particles[1].cfg.startColorBlue  = p2_not_white.b / 255.f;
+
+    glitter_particles.cfg.startColorRed   = p1_not_white.r / 255.f;
+    glitter_particles.cfg.startColorGreen = p1_not_white.g / 255.f;
+    glitter_particles.cfg.startColorBlue  = p1_not_white.b / 255.f;
 
     exiting_level = false;
 
@@ -313,6 +318,7 @@ void game_loop() {
             }
             
             brick_destroy_particles.emitting = false;
+            glitter_particles.emitting = false;
             
             u64 now = svcGetSystemTick();
             delta = (now - lastTime) / (CPU_TICKS_PER_MSEC * 1000);
@@ -415,6 +421,7 @@ void game_loop() {
                 updateParticleSystem(&land_particles[i], delta);
             }
             updateParticleSystem(&brick_destroy_particles, delta);
+            updateParticleSystem(&glitter_particles, delta);
             update_use_effects(delta);
             update_object_particles();
             u64 end_part = svcGetSystemTick();
@@ -532,6 +539,7 @@ void game_loop() {
     }
 
     freeParticleData(&brick_destroy_particles.data);
+    freeParticleData(&glitter_particles.data);
     unload_level();
 
     game_state = STATE_LEVEL_SELECT;

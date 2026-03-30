@@ -68,7 +68,7 @@ void run_camera() {
         }
     } else */
      if (player->gamemode == GAMEMODE_PLAYER && !state.dual) {
-        float distance = state.camera_y_lerp + ((SCREEN_HEIGHT_AREA / 2) - CAMERA_Y_OFFSET) - player->y;
+        float distance = state.camera_y_middle - player->y;
         float distance_abs = fabsf(distance);
 
         int mult = (distance >= 0 ? 1 : -1);
@@ -101,6 +101,10 @@ void run_camera() {
         state.intermediate_camera_y = state.camera_y;
     }
 	state.camera_x = player->x - 125.0f/SCALE;
+    
+
+    state.camera_x_middle = state.camera_x + (SCREEN_WIDTH_AREA / 2);
+    state.camera_y_middle = state.camera_y_lerp + ((SCREEN_HEIGHT_AREA / 2) - CAMERA_Y_OFFSET);
 }
 
 void set_hitbox_size(Player *player, int gamemode) {

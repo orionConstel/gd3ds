@@ -1049,6 +1049,7 @@ void draw_objects() {
                 drawParticleSystem(&land_particles[i], 0, 0, 1.f);
             }
             drawParticleSystem(&brick_destroy_particles, 0, 0, 1.f);
+            drawParticleSystem(&glitter_particles, 0, 0, 1.f);
             change_blending(false);
             blend_enabled = false;
             state.current_player = 0;
