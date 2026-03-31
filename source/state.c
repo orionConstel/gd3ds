@@ -5,6 +5,8 @@
 #include "player/slope.h"
 #include "mp3_player.h"
 #include "player/collision.h"
+#include "particles/circles.h"
+#include "particles/particles.h"
 
 GameState state;
 
@@ -250,4 +252,19 @@ void handle_death() {
     play_sfx(&explode_sound, 1);
     pause_playback_mp3();
     seek_mp3(0);
+
+    Player *player = (state.current_player == 1) ? &state.player2 : &state.player;
+
+    UseEffect *effect = add_use_effect(player->x, player->y, &death_effect, GFX_TOP);
+    if (effect) {
+        Color color_not_white = get_white_if_black((state.current_player == 1 ? p2_color : p1_color));
+
+        effect->def.colorR = color_not_white.r / 255.f;
+        effect->def.colorG = color_not_white.g / 255.f;
+        effect->def.colorB = color_not_white.b / 255.f;
+    }
+
+    explosion_particles[state.current_player].emitterX = player->x;
+    explosion_particles[state.current_player].emitterY = player->y;
+    spawnMultipleParticles(&explosion_particles[state.current_player], 30);
 }

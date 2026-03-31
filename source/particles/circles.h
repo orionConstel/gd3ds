@@ -49,6 +49,7 @@ extern const UseEffectDefinition pad_use_effect;
 extern const UseEffectDefinition orb_use_effect;
 extern const UseEffectDefinition orb_collide_effect;
 extern const UseEffectDefinition portal_use_effect;
+extern const UseEffectDefinition death_effect;
 
 UseEffect *add_use_effect(float x, float y, const UseEffectDefinition *def, int screen);
 void update_use_effects(float delta, int screen);

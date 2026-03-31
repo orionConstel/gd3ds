@@ -194,6 +194,9 @@ void game_loop() {
 
     initParticleSystem(&land_particles[0], &land_effect);
     initParticleSystem(&land_particles[1], &land_effect);
+    
+    initParticleSystem(&explosion_particles[0], &explode_effect);
+    initParticleSystem(&explosion_particles[1], &explode_effect);
 
     initParticleSystem(&brick_destroy_particles, &glass_destroy_01);
     initParticleSystem(&glitter_particles, &glitter_effect);
@@ -256,6 +259,14 @@ void game_loop() {
     land_particles[1].cfg.startColorGreen = p2_not_white.g / 255.f;
     land_particles[1].cfg.startColorBlue  = p2_not_white.b / 255.f;
 
+    explosion_particles[0].cfg.startColorRed   = p1_not_white.r / 255.f;
+    explosion_particles[0].cfg.startColorGreen = p1_not_white.g / 255.f;
+    explosion_particles[0].cfg.startColorBlue  = p1_not_white.b / 255.f;
+
+    explosion_particles[1].cfg.startColorRed   = p2_not_white.r / 255.f;
+    explosion_particles[1].cfg.startColorGreen = p2_not_white.g / 255.f;
+    explosion_particles[1].cfg.startColorBlue  = p2_not_white.b / 255.f;
+
     glitter_particles.cfg.startColorRed   = p1_not_white.r / 255.f;
     glitter_particles.cfg.startColorGreen = p1_not_white.g / 255.f;
     glitter_particles.cfg.startColorBlue  = p1_not_white.b / 255.f;
@@ -310,6 +321,18 @@ void game_loop() {
         
         state.input.pressedJump = ((kDown & KEY_A) || (in_bounds && (kDown & KEY_TOUCH))) == true;
         state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (in_bounds && (kHeld & KEY_TOUCH))) == true;
+        
+        for (int i = 0; i < 2; i++) {
+            drag_particles[i].emitting = false;
+            drag_particles_2[i].stationary = true;
+            drag_particles_2[i].emitting = false;
+            ship_fire_particles[i].emitting = false;
+            secondary_particles[i].emitting = false;
+            ship_secondary_particles[i].emitting = false;
+            burst_particles[i].emitting = false;
+            land_particles[i].emitting = false;
+        }
+
         if (state.death_timer <= 0)  {
             physics_calc_time = 0;
             number_of_collisions = 0;
@@ -317,17 +340,6 @@ void game_loop() {
             collision_time = 0;
             player_time = 0;
             handle_player_time = 0;
-    
-            for (int i = 0; i < 2; i++) {
-                drag_particles[i].emitting = false;
-                drag_particles_2[i].stationary = true;
-                drag_particles_2[i].emitting = false;
-                ship_fire_particles[i].emitting = false;
-                secondary_particles[i].emitting = false;
-                ship_secondary_particles[i].emitting = false;
-                burst_particles[i].emitting = false;
-                land_particles[i].emitting = false;
-            }
             
             brick_destroy_particles.emitting = false;
             glitter_particles.emitting = false;
@@ -394,7 +406,6 @@ void game_loop() {
             if (state.dead && state.death_timer <= 0.f) {
                 state.death_timer = 1.f;
                 handle_death();
-                state.dead = false;
             }
 
             if (state.death_timer > 0.f) {
@@ -405,6 +416,7 @@ void game_loop() {
                     reload_level(); 
                     unpause_playback_mp3();
                     fixed_dt = true; 
+                    state.dead = false;
                 }
             }
 
@@ -431,6 +443,7 @@ void game_loop() {
                 updateParticleSystem(&secondary_particles[i], delta);
                 updateParticleSystem(&burst_particles[i], delta);
                 updateParticleSystem(&land_particles[i], delta);
+                updateParticleSystem(&explosion_particles[i], delta);
             }
             updateParticleSystem(&brick_destroy_particles, delta);
             updateParticleSystem(&glitter_particles, delta);
@@ -553,6 +566,7 @@ void game_loop() {
         freeParticleData(&ship_secondary_particles[i].data);
         freeParticleData(&burst_particles[i].data);
         freeParticleData(&land_particles[i].data);
+        freeParticleData(&explosion_particles[i].data);
     }
 
     freeParticleData(&brick_destroy_particles.data);

@@ -30,6 +30,7 @@ ParticleSystem ship_secondary_particles[2];
 ParticleSystem secondary_particles[2];
 ParticleSystem burst_particles[2];
 ParticleSystem land_particles[2];
+ParticleSystem explosion_particles[2];
 ParticleSystem glitter_particles;
 
 
@@ -743,6 +744,9 @@ void draw_player(Player *player) {
     MotionTrail_DrawWaveTrail(wave_trail);
 
     change_blending(false);
+
+    // Don't draw player if dead
+    if (state.dead) return;
 
     float calc_x = ((player->x - state.camera_x));
     float calc_y = SCREEN_HEIGHT - ((player->y - state.camera_y));

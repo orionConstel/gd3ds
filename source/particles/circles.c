@@ -68,6 +68,24 @@ const UseEffectDefinition orb_collide_effect = {
     .end_rad_ease = EASE_OUT,
     .line_thickness = 1.f
 };
+const UseEffectDefinition death_effect = {
+    .colorR = 1, 
+    .colorG = 1,
+    .colorB = 1,
+    .duration = 0.5f,
+    .start_opacity = 1,
+    .end_opacity = 0,
+    .start_rad = 4,
+    .end_rad = 80,
+    .hollow = false,
+    .trifading = false,
+    .start_opacity_ease = EASE_LINEAR,
+    .end_opacity_ease = EASE_LINEAR,
+    .start_rad_ease = EASE_OUT,
+    .end_rad_ease = EASE_OUT,
+};
+
+
 UseEffect use_effects_top[MAX_USE_EFFECTS];
 UseEffect use_effects_bot[MAX_USE_EFFECTS];
 

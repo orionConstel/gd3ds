@@ -73,8 +73,6 @@ typedef struct {
     bool dual_setup;
     bool dead;
 
-    bool paused;
-
     bool profiling;
 
     float level_progress;

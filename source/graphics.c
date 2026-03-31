@@ -1047,6 +1047,7 @@ void draw_objects() {
                 drawParticleSystem(&secondary_particles[i], 0, 0, 1.f);
                 drawParticleSystem(&burst_particles[i], 0, 0, 1.f);
                 drawParticleSystem(&land_particles[i], 0, 0, 1.f);
+                drawParticleSystem(&explosion_particles[i], 0, 0, 1.f);
             }
             drawParticleSystem(&brick_destroy_particles, 0, 0, 1.f);
             drawParticleSystem(&glitter_particles, 0, 0, 1.f);
