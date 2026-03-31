@@ -18,11 +18,9 @@
 #include "particles/object_particles.h"
 #include "particles/circles.h"
 
-const Color white = { 255, 255, 255 };
+#include "menus/settings.h"
 
-bool particlesDisabled = false;
-bool wideEnabled = false;
-bool glowEnabled = true;
+const Color white = { 255, 255, 255 };
 
 int sprite_count = 0;
 

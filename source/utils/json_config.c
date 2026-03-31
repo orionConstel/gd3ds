@@ -135,6 +135,14 @@ void config_set_bool(Config* cfg, const char* path, int value) {
     json_object_object_add(parent, key, json_object_new_boolean(value));
 }
 
+void config_init_bool(Config* cfg, const char* path, bool def) {
+    config_set_bool(cfg, path, config_get_bool(cfg, path, def));
+}
+
+void config_init_int(Config* cfg, const char* path, int def) {
+    config_set_int(cfg, path, config_get_int(cfg, path, def));
+}
+
 void config_free(Config* cfg) {
     json_object_put(cfg->root);
 }

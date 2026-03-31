@@ -2,6 +2,11 @@ darken opacity=0.4
 window x=160 y=120 w=220 h=180 style=0
 button x=50 y=30 id=31 scale=0.8 action="exit"
 
+# Page switch
+
+button x=80 y=45 id=8 scale=0.7 action="left_page"
+button x=240 y=45 id=8 sx=-0.7 sy=0.7 action="right_page"
+
 # Checkboxes
 
 label x=160 y=45 text="Graphics" tag="page1" scale=0.6 align=CENTER
@@ -14,3 +19,8 @@ label x=90 y=115 text="Disable particles" scale=0.4 tag="page1"
 
 checkbox x=75 y=145 tag="page1,chk_glow" scale=0.75 action="glow"
 label x=90 y=145 text="Object glow" scale=0.4 tag="page1"
+
+label x=160 y=45 text="Input" tag="page2" scale=0.6 align=CENTER
+
+checkbox x=75 y=85 tag="page2,chk_y_jump" scale=0.75 action="y_jump"
+label x=90 y=85 text="Y to jump" scale=0.4 tag="page2"

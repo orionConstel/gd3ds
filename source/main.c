@@ -35,6 +35,7 @@
 
 #include "player/player.h"
 #include "particles/circles.h"
+#include "menus/settings.h"
 
 #define CITRA_TYPE 0x20000
 #define CITRA_VERSION 11
@@ -308,7 +309,7 @@ void game_loop() {
         if (kDown & KEY_L)
             state.profiling ^= 1;
 
-        if (kDown & KEY_Y) {
+        if (kDown & KEY_R) {
             state.hitbox_display++;
             if (state.hitbox_display > 2) state.hitbox_display = 0;
         }      
@@ -319,8 +320,11 @@ void game_loop() {
 
         bool in_bounds = touchPos.px < 320 - 30 || touchPos.py > 30;
         
-        state.input.pressedJump = ((kDown & KEY_A) || (in_bounds && (kDown & KEY_TOUCH))) == true;
-        state.input.holdJump = (state.input.pressedJump || (kHeld & KEY_A) || (in_bounds && (kHeld & KEY_TOUCH))) == true;
+        bool buttonPressed = (yJump ? (kDown & KEY_Y) : (kDown & KEY_A));
+        bool buttonHeld = (yJump ? (kHeld & KEY_Y) : (kHeld & KEY_A));
+
+        state.input.pressedJump = (buttonPressed || (in_bounds && (kDown & KEY_TOUCH))) == true;
+        state.input.holdJump = (state.input.pressedJump || buttonHeld || (in_bounds && (kHeld & KEY_TOUCH))) == true;
         
         for (int i = 0; i < 2; i++) {
             drag_particles[i].emitting = false;

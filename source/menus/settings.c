@@ -15,12 +15,57 @@
 #include "graphics.h"
 #include "main_menu.h"
 #include "level_select.h"
+#include "settings.h"
 
 #include "save/config.h"
 
 static bool yes_exit = false;
 
+static int current_page = 0;
+
 static UIScreen screen;
+
+bool particlesDisabled = false;
+bool wideEnabled = false;
+bool glowEnabled = true;
+bool yJump = false;
+
+static Setting settings[] = {
+    {
+        "chk_wide", &wideEnabled
+    },
+    {
+        "chk_particle", &particlesDisabled
+    },
+    {
+        "chk_glow", &glowEnabled
+    },
+    {
+        "chk_y_jump", &yJump
+    },
+};
+
+
+#define NUMBER_SETTINGS (sizeof(settings) / sizeof(Setting))
+
+
+const char *pages_tags[] = {
+    "page1",
+    "page2"
+};
+
+#define NUMBER_PAGES (sizeof(pages_tags) / sizeof(char *))
+
+
+void switch_page(int page) {
+    for (int i = 0; i < NUMBER_PAGES; i++) {
+        if (i == page) {
+            ui_run_func_on_tag(&screen, pages_tags[page], ui_enable_element);
+        } else {
+            ui_run_func_on_tag(&screen, pages_tags[i], ui_disable_element);
+        }
+    }
+}
 
 void exit_settings(UIElement* e) {
     yes_exit = true;
@@ -33,8 +78,31 @@ void wide_settings(UIElement* e) {
 void particles_settings(UIElement* e) {
     particlesDisabled = e->checkbox.checked;
 }
+
 void glow_settings(UIElement* e) {
     glowEnabled = e->checkbox.checked;
+}
+
+void y_button_settings(UIElement* e) {
+    yJump = e->checkbox.checked;
+}
+
+void action_left_page(UIElement *e) {
+    current_page--;
+    if (current_page < 0) {
+        current_page = NUMBER_PAGES - 1;
+    }
+
+    switch_page(current_page);
+}
+
+void action_right_page(UIElement *e) {
+    current_page++;
+    if (current_page >= NUMBER_PAGES) {
+        current_page = 0;
+    }
+
+    switch_page(current_page);
 }
 
 static UIAction actions[] = {
@@ -42,15 +110,22 @@ static UIAction actions[] = {
     { "wide", wide_settings },
     { "particles", particles_settings },
     { "glow", glow_settings },
+    { "y_jump", y_button_settings },
+    { "left_page", action_left_page},
+    { "right_page", action_right_page},
 };
-
 
 void settings_init() {
     ui_load_screen(&screen, actions, sizeof(actions) / sizeof(actions[0]), "romfs:/menus/settings.txt");
     yes_exit = false;
-    ui_get_element_by_tag(&screen, "chk_wide")->checkbox.checked = wideEnabled;
-    ui_get_element_by_tag(&screen, "chk_particle")->checkbox.checked = particlesDisabled;
-    ui_get_element_by_tag(&screen, "chk_glow")->checkbox.checked = glowEnabled;
+
+    for (int i = 0; i < NUMBER_SETTINGS; i++) {
+        ui_get_element_by_tag(&screen, settings[i].chk_name)->checkbox.checked = *settings[i].var;
+    }
+
+    current_page = 0;
+
+    switch_page(0);
 }
 
 int settings_loop() {

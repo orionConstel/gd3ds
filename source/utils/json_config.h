@@ -1,4 +1,5 @@
 #pragma once
+#include <3ds.h>
 #include <json-c/json.h>
 
 #define CONFIG_PARENT "/3ds/"
@@ -7,6 +8,7 @@
 #define CONFIG_FILE CONFIG_ROOT CONFIG_FILENAME
 
 #define CONFIG_GRAPHICS_PATH "graphics."
+#define CONFIG_INPUT_PATH "input."
 #define CONFIG_CUSTOMIZATION_PATH "custom."
 
 #define CONFIG_OBJECT_DELIMITER "."
@@ -27,3 +29,6 @@ int config_get_bool(Config* cfg, const char* path, int def);
 void config_set_string(Config* cfg, const char* path, const char* value);
 void config_set_int(Config* cfg, const char* path, int value);
 void config_set_bool(Config* cfg, const char* path, int value);
+
+void config_init_bool(Config* cfg, const char* path, bool def);
+void config_init_int(Config* cfg, const char* path, int def);

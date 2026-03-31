@@ -3,6 +3,7 @@
 #include "graphics.h"
 #include "main.h"
 #include "state.h"
+#include "menus/settings.h"
 
 void set_scissor(GPU_SCISSORMODE mode, int x, int y, int width, int height) {
     int screen_width = GSP_SCREEN_HEIGHT_BOTTOM;

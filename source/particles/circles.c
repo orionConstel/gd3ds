@@ -187,9 +187,6 @@ void draw_use_effects(int screen) {
                 y = GSP_SCREEN_WIDTH - ((y - state.camera_y));  
             }
 
-            float calc_x = x;
-            float calc_y = y;
-
             int fade_x = 0;
             int fade_y = 0;
 
@@ -198,18 +195,18 @@ void draw_use_effects(int screen) {
 
             if (screen == GFX_TOP) {
                 float fade_scale = 1.f;
-                get_fade_vars(effect->obj, calc_x, &fade_x, &fade_y, &fade_scale);
+                get_fade_vars(effect->obj, x, &fade_x, &fade_y, &fade_scale);
 
-                opacity = obj_edge_fade(calc_x, SCREEN_WIDTH / SCALE) / 255.f;
+                opacity = obj_edge_fade(x, SCREEN_WIDTH / SCALE) / 255.f;
             }
 
             u32 color = C2D_Color32f(r, g, b, a * opacity);
             
 
             if (effect->def.hollow) {
-                custom_circunference(x, y, size, color, effect->def.line_thickness);
+                custom_circunference(x + fade_x, y + fade_y, size * fade_scale, color, effect->def.line_thickness);
             } else {
-                custom_circle(x, y, size, color);
+                custom_circle(x + fade_x, y + fade_y, size * fade_scale, color);
             }
         }
     }

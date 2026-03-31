@@ -9,8 +9,27 @@
 
 #include "utils/gfx.h"
 #include "menus/icon_kit.h"
+#include "menus/settings.h"
 
 Config cfg;
+
+void init_values() {
+    config_init_bool(&cfg, CONFIG_GRAPHICS_PATH "particlesDisabled", false);
+    config_init_bool(&cfg, CONFIG_GRAPHICS_PATH "wideEnabled", false);
+    config_init_bool(&cfg, CONFIG_GRAPHICS_PATH "glowEnabled", true);
+
+    config_init_bool(&cfg, CONFIG_INPUT_PATH "yButton", false);
+
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "cube", 1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ship", 1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ball", 1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", 1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   DEFAULT_P1);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   DEFAULT_P2);
+    config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", DEFAULT_GLOW);
+    config_init_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", false);
+}
 
 void cfg_init() {
     // Make the directories
@@ -19,19 +38,7 @@ void cfg_init() {
 
     config_load(&cfg, CONFIG_FILE);
 
-    config_set_bool(&cfg, CONFIG_GRAPHICS_PATH "particlesDisabled", config_get_bool(&cfg, CONFIG_GRAPHICS_PATH "particlesDisabled", false));
-    config_set_bool(&cfg, CONFIG_GRAPHICS_PATH "wideEnabled", config_get_bool(&cfg, CONFIG_GRAPHICS_PATH "wideEnabled", false));
-    config_set_bool(&cfg, CONFIG_GRAPHICS_PATH "glowEnabled", config_get_bool(&cfg, CONFIG_GRAPHICS_PATH "glowEnabled", true));
-
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "cube", config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "cube", 1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ship", config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ship", 1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ball", config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ball", 1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ufo",  1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "wave", 1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p1",   DEFAULT_P1));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   DEFAULT_P2));
-    config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", DEFAULT_GLOW));
-    config_set_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", config_get_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", false));
+    init_values();
 
     particlesDisabled = config_get_bool(&cfg, CONFIG_GRAPHICS_PATH "particlesDisabled", false);
     set_wide(config_get_bool(&cfg, CONFIG_GRAPHICS_PATH "wideEnabled", false));
@@ -46,6 +53,8 @@ void cfg_init() {
     selected_p2   = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   DEFAULT_P2);
     selected_glow = config_get_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", DEFAULT_GLOW);
     player_glow_enabled = config_get_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", false);
+
+    yJump = config_get_bool(&cfg, CONFIG_INPUT_PATH "yButton", false);
 
     config_save(&cfg);
 }
@@ -64,6 +73,8 @@ void cfg_save() {
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "p2",   selected_p2  );
     config_set_int(&cfg, CONFIG_CUSTOMIZATION_PATH "glow", selected_glow);
     config_set_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", player_glow_enabled);
+
+    config_set_bool(&cfg, CONFIG_INPUT_PATH "yButton", yJump);
 
     config_save(&cfg);
 }

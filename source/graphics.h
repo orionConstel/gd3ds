@@ -23,10 +23,6 @@
 
 #define CAMERA_Y_OFFSET (SCREEN_HEIGHT_AREA - (SCREEN_HEIGHT_AREA * SCALE))
 
-extern bool particlesDisabled;
-extern bool wideEnabled;
-extern bool glowEnabled; 
-
 extern int current_pulserod_ball_image;
 
 // Simple sprite struct
