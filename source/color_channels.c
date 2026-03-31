@@ -268,12 +268,11 @@ void run_trigger(int obj) {
 
 void handle_triggers() {
     int cam_sx = (int)((state.player.x) / SECTION_SIZE);
-    int cam_sy = (int)((state.player.y) / SECTION_SIZE);
     
     for (int sx = -1; sx < 1; sx++) {
         for (int sy = -(400 / SECTION_SIZE); sy <= MAX_LEVEL_HEIGHT / SECTION_SIZE; sy++) {
             int sec_x = cam_sx + sx;
-            int sec_y = cam_sy + sy;
+            int sec_y = sy;
             if (sec_x < 0) continue;
 
             Section *sec = get_or_create_section(sec_x, sec_y);
