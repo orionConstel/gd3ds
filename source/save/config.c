@@ -19,6 +19,7 @@ void init_values() {
     config_init_bool(&cfg, CONFIG_GRAPHICS_PATH "glowEnabled", true);
 
     config_init_bool(&cfg, CONFIG_INPUT_PATH "yButton", false);
+    config_init_bool(&cfg, CONFIG_INPUT_PATH "touchEffectEverywhere", false);
 
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "cube", 1);
     config_init_int(&cfg, CONFIG_CUSTOMIZATION_PATH "ship", 1);
@@ -55,6 +56,7 @@ void cfg_init() {
     player_glow_enabled = config_get_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", false);
 
     yJump = config_get_bool(&cfg, CONFIG_INPUT_PATH "yButton", false);
+    touchEffectEverywhere = config_get_bool(&cfg, CONFIG_INPUT_PATH "touchEffectEverywhere", false);
 
     config_save(&cfg);
 }
@@ -75,6 +77,7 @@ void cfg_save() {
     config_set_bool(&cfg, CONFIG_CUSTOMIZATION_PATH "playerGlowEnabled", player_glow_enabled);
 
     config_set_bool(&cfg, CONFIG_INPUT_PATH "yButton", yJump);
+    config_set_bool(&cfg, CONFIG_INPUT_PATH "touchEffectEverywhere", touchEffectEverywhere);
 
     config_save(&cfg);
 }

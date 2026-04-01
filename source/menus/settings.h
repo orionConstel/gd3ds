@@ -10,6 +10,7 @@ extern bool particlesDisabled;
 extern bool wideEnabled;
 extern bool glowEnabled; 
 extern bool yJump;
+extern bool touchEffectEverywhere;
 
 void settings_init();
 int settings_loop();

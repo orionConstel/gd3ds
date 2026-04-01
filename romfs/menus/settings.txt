@@ -24,3 +24,6 @@ label x=160 y=45 text="Input" tag="page2" scale=0.6 align=CENTER
 
 checkbox x=75 y=85 tag="page2,chk_y_jump" scale=0.75 action="y_jump"
 label x=90 y=85 text="Y to jump" scale=0.4 tag="page2"
+
+checkbox x=75 y=115 tag="page2,chk_touch_effect" scale=0.75 action="touch_effect"
+label x=90 y=115 text="Touch effect everywhere" scale=0.4 tag="page2"

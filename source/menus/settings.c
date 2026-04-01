@@ -29,6 +29,7 @@ bool particlesDisabled = false;
 bool wideEnabled = false;
 bool glowEnabled = true;
 bool yJump = false;
+bool touchEffectEverywhere = false;
 
 static Setting settings[] = {
     {
@@ -42,6 +43,9 @@ static Setting settings[] = {
     },
     {
         "chk_y_jump", &yJump
+    },
+    {
+        "chk_touch_effect", &touchEffectEverywhere
     },
 };
 
@@ -87,6 +91,10 @@ void y_button_settings(UIElement* e) {
     yJump = e->checkbox.checked;
 }
 
+void touch_effect_settings(UIElement* e) {
+    touchEffectEverywhere = e->checkbox.checked;
+}
+
 void action_left_page(UIElement *e) {
     current_page--;
     if (current_page < 0) {
@@ -111,6 +119,7 @@ static UIAction actions[] = {
     { "particles", particles_settings },
     { "glow", glow_settings },
     { "y_jump", y_button_settings },
+    { "touch_effect", touch_effect_settings },
     { "left_page", action_left_page},
     { "right_page", action_right_page},
 };

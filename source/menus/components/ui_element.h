@@ -5,7 +5,7 @@
 #include "utils/gfx.h"
 
 #define TAGS_PER_ELEMENT 5
-#define TAG_LENGTH 16
+#define TAG_LENGTH 32
 
 typedef enum {
     UI_BUTTON,

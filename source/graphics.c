@@ -19,6 +19,7 @@
 #include "particles/circles.h"
 
 #include "menus/settings.h"
+#include "menus/gameplay.h"
 
 const Color white = { 255, 255, 255 };
 
@@ -1110,18 +1111,15 @@ void update_touch_effect(float delta) {
 
     touch_drag_particles.emitting = false;
 
-    if ((kHeld & KEY_TOUCH) && !get_fade_status()) {
-        // Flip for particles
-        pos.py = SCREEN_HEIGHT - pos.py;
+    if ((touchEffectEverywhere || (game_state == STATE_GAME && !game_paused)) && (kHeld & KEY_TOUCH) && !get_fade_status()) {
+        // Flipped for particles
+        float flipped_y = SCREEN_HEIGHT - pos.py;
+
         // Use effect
         if (kDown & KEY_TOUCH) {
-            // Flip for particles
-            pos.py = SCREEN_HEIGHT - pos.py;
             UseEffect *effect = add_use_effect(pos.px, pos.py, -1, &tap_effect, GFX_BOTTOM);    
-            // Flip for particles
-            pos.py = SCREEN_HEIGHT - pos.py;
             touch_explosion_particles.emitterX = pos.px;
-            touch_explosion_particles.emitterY = pos.py;
+            touch_explosion_particles.emitterY = flipped_y;
             spawnMultipleParticles(&touch_explosion_particles, 50);
             if (effect) {
                 Color p1_not_white = get_white_if_black(p1_color);
@@ -1133,7 +1131,7 @@ void update_touch_effect(float delta) {
         }
 
         touch_drag_particles.emitterX = pos.px;
-        touch_drag_particles.emitterY = pos.py;
+        touch_drag_particles.emitterY = flipped_y;
         touch_drag_particles.emitting = true;
 
         
