@@ -150,6 +150,13 @@ unsigned int frame_counter = 0;
 bool exiting_level = false;
 
 void game_loop() {
+    C3D_FrameBegin(C3D_FRAME_SYNCDRAW);
+    C2D_SceneBegin(top);
+    C2D_TargetClear(top, C2D_Color32(0, 0, 0, 255));
+    C2D_Fade(0);
+    draw_text(bigFont_fontCharset, bigFont_sheet, SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10, 0.5f, 1.0f, "Loading...");
+    C3D_FrameEnd(0);
+    
     char *path;
 
     if (state.custom_level) {
