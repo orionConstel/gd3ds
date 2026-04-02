@@ -1272,7 +1272,7 @@ void load_level_info(char *data, char *level_string) {
     }
 
     char *level_name_data = extract_gmd_key((const char *) data, "k2", "s");
-    if (upsidedown_data) {
+    if (level_name_data) {
         level_info.level_name = level_name_data;
     } else {
         level_info.level_name = (char *) default_name;

@@ -95,7 +95,7 @@ bool mp3_init(void *file) {
     int encoding = 0;
 
     if ((mh = mpg123_new(NULL, &err)) == NULL) {
-        printf("Couldn't new it\n");
+        output_log("Couldn't new it\n");
         return 0;
     }
 
@@ -108,12 +108,12 @@ bool mp3_init(void *file) {
     mpg123_format(mh, 48000, MPG123_MONO,   MPG123_ENC_SIGNED_16);
 
     if (mpg123_open(mh, file) != MPG123_OK) {
-        printf("Couldn't open file\n");
+        output_log("Couldn't open file\n");
         return 0;
     }
 
     if (mpg123_getformat(mh, &rate, &audio_channels, &encoding) != MPG123_OK) {
-        printf("Couldn't get format\n");
+        output_log("Couldn't get format\n");
         return 0;
     }
 
@@ -194,7 +194,6 @@ void audio_thread(void *const file) {
 
     audio_init();
 
-    output_log("seek target %.2f\n", seek_target);
     if (seek_target > 0) {   
         seek_mp3(seek_target);    
         seek_target = -1;
