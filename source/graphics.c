@@ -268,11 +268,17 @@ const int obj_135_random_layers[4] = {
 };
 
 int get_obj_random_layer(int obj, int id) {
+    int tex = game_objects[id].texture;
     switch (id) {
         case 9:
-            return obj_9_random_layers[objects.random[obj] & 0b11];
+            int offset = objects.random[obj] & 0b11;
+            if (offset == 3) offset = 0;
+            
+            if (offset > 0) offset += 3;
+
+            return tex + offset;
         case 135:
-            return obj_135_random_layers[objects.random[obj] & 0b11];
+            return tex + (objects.random[obj] & 0b11);
     }
     return -1;
 }

@@ -256,6 +256,10 @@ const ObjectHitbox hitbox_141[] = {
     { HITBOX_SPECIAL, 0.00, 0.00, 36.00, 36.00, COLLISION_BOX }
 };
 
+const ObjectHitbox hitbox_142[] = {
+    { HITBOX_SPECIAL, 0.00, 0.00, 40.00, 40.00, COLLISION_BOX }
+};
+
 const ObjectHitbox hitbox_143[] = {
     { HITBOX_SOLID, 0.00, 0.00, 30.00, 30.00, COLLISION_BOX }
 };
@@ -989,7 +993,7 @@ const ChildSprite children_47[] = {
 };
 
 const ChildSprite children_62[] = {
- { 97, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
+ { 98, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
 };
 
 const ChildSprite children_63[] = {
@@ -1001,15 +1005,15 @@ const ChildSprite children_64[] = {
 };
 
 const ChildSprite children_65[] = {
- { 97, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
+ { 98, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
 };
 
 const ChildSprite children_66[] = {
- { 97, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
+ { 98, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
 };
 
 const ChildSprite children_68[] = {
- { 97, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
+ { 98, 0.00, 7.25, 1.00, 1.00, 0, 0, 1, 0, 0.00, COLOR_TYPE_BASE, 1.00 },
 };
 
 const ChildSprite children_69[] = {
@@ -1907,7 +1911,7 @@ const GameObject game_objects[GAME_OBJECT_COUNT] = {
     { 337, -1, 0.00, 0.00, 3, 9, 1006, COLOR_TYPE_DETAIL, 1, 1.00, 0, NULL, NULL },
     { 120, 39, 0.00, 0.00, 3, 12, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_140 },
     { 630, 109, 0.00, 0.00, 3, 12, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_141 },
-    { 867, -1, 0.00, 0.00, 0, 0, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, NULL },
+    { 867, -1, 0.00, 0.00, 5, 9, 0, COLOR_TYPE_WHITE, 0, 1.00, 0, NULL, hitbox_142 },
     { 118, 36, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_143 },
     { 360, 58, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_144 },
     { 362, 60, 0.00, 0.00, 5, 2, 1004, COLOR_TYPE_BASE, 0, 1.00, 0, NULL, hitbox_145 },
