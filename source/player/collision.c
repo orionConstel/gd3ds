@@ -949,10 +949,16 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
                     return;
             }
             
-            // Collide with slope if object is an slope
-            if (hitbox->type == COLLISION_SLOPE) {
-                slope_collide(obj, player);
-                break;
+            for (size_t i = 0; i < potential_slopes; i++) {
+                int potential_slope = potential_slopes_buffer[i];
+
+                unsigned char orient = objects.orientation[potential_slope];
+                float block_comp = orient < 2 ? obj_getTop(obj) : obj_getBottom(obj);
+                float slope_comp = orient < 2 ? obj_getBottom(potential_slope) : obj_getTop(potential_slope);
+
+                if (block_comp - slope_comp < 2) {
+                    return;
+                }
             }
             
             if (player->gravObj_id >= 0 && GET_HITBOX_COUNTER(player->gravObj_id) == 1) {
@@ -964,18 +970,7 @@ void handle_collision(Player *player, int obj, const ObjectHitbox *hitbox) {
 
                 gravSnap = (!state.old_player.on_ground || player->ceiling_inv_time > 0) && internalCollidingBlock && obj_gravBottom(player, obj) - gravInternalBottom(player) <= clip;
             }
-            
-            
-            if (player->potentialSlope_id >= 0) {
-                unsigned char orient = objects.orientation[player->potentialSlope_id];
-                float block_comp = orient < 2 ? obj_getTop(obj) : obj_getBottom(obj);
-                float slope_comp = orient < 2 ? obj_getBottom(player->potentialSlope_id) : obj_getTop(player->potentialSlope_id);
 
-                if (block_comp - slope_comp < 2) {
-                    return;
-                }
-            }
-            
             bool safeZone = player->mini && ((obj_gravTop(player, obj) - gravBottom(player) <= clip) || (gravTop(player) - obj_gravBottom(player, obj) <= clip));
             
             if ((player->gamemode == GAMEMODE_DART || (!gravSnap && !safeZone)) && intersect(
@@ -1107,12 +1102,6 @@ void collide_with_slope(Player *player, int obj, bool has_slope) {
         player->x, player->y, player->width, player->height, 0, 
         objects.x[obj], objects.y[obj], width, height, objects.rotation[obj]
     )) {
-        // The same check in handle_collision
-        if (has_slope) {
-            float bottom = gravBottom(player) + sinf(slope_angle(player->slope_data.slope_id, player)) * player->height / 2;
-            if (obj_gravTop(player, obj) - bottom < 2)
-                return;
-        }
         slope_collide(obj, player);
     }
 }
@@ -1125,6 +1114,9 @@ int block_count = 0;
 
 int hazard_buffer[MAX_COLLIDED_OBJECTS];
 int hazard_count = 0;
+
+int potential_slopes_buffer[MAX_COLLIDED_OBJECTS];
+int potential_slopes = 0;
 
 int number_of_collisions = 0;
 int number_of_collisions_checks = 0;
@@ -1172,6 +1164,7 @@ void collide_with_objects(Player *player) {
         int obj = block_buffer[i];
         collide_with_obj(player, obj);
     }
+    potential_slopes = 0;
 
     bool has_slope = player->slope_data.slope_id >= 0;
     for (int i = 0; i < slope_count; i++) {

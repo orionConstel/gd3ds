@@ -83,6 +83,9 @@ extern int number_of_collisions_checks;
 
 #define MAX_COLLIDED_OBJECTS 512
 
+extern int potential_slopes_buffer[MAX_COLLIDED_OBJECTS];
+extern int potential_slopes;
+
 void setup_dual();
 
 void collide_with_objects(Player *player);
