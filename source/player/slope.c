@@ -113,6 +113,7 @@ void slope_snap_y(int obj, Player *player) {
             }
 
             player->time_since_ground = 0;
+            player->on_ground = true;
             snap_player_to_slope(obj, player);
             
             if (player->vel_y < 0) {
@@ -127,6 +128,7 @@ void slope_snap_y(int obj, Player *player) {
             }
             
             player->time_since_ground = 0;
+            player->on_ground = true;
             snap_player_to_slope(obj, player);
             if (player->vel_y < 0) {
                 player->vel_y = 0;
@@ -140,6 +142,7 @@ void slope_snap_y(int obj, Player *player) {
             }
             
             player->time_since_ground = 0;
+            player->on_ceiling = true;
             snap_player_to_slope(obj, player);
             if (player->vel_y > 0) {
                 player->vel_y = 0;
@@ -153,6 +156,7 @@ void slope_snap_y(int obj, Player *player) {
             }
 
             player->time_since_ground = 0;
+            player->on_ceiling = true;
             snap_player_to_slope(obj, player);
             
             if (player->vel_y > 0) {
@@ -297,6 +301,8 @@ bool player_circle_touches_slope(int obj, Player *player) {
 
     float hw = objects.width[obj] / 2.f, hh = objects.height[obj] / 2.f;
 
+    float player_radius = (player->width - 4) / 2;
+
     // Collide with hipotenuse
     switch (orientation) {
         case ORIENT_NORMAL_UP:
@@ -317,7 +323,7 @@ bool player_circle_touches_slope(int obj, Player *player) {
             x1 = y1 = x2 = y2 = 0;
             break;
     }
-    bool collided_hipo = circle_rect_collision(player->x, player->y, player->width / 2, x1, y1, x2, y2);
+    bool collided_hipo = circle_rect_collision(player->x, player->y, player_radius, x1, y1, x2, y2);
 
     // Collide with vertical
     switch (orientation) {
@@ -340,7 +346,7 @@ bool player_circle_touches_slope(int obj, Player *player) {
             break;
     }
     
-    bool collided_vertical = circle_rect_collision(player->x, player->y, player->width / 2, x1, y1, x2, y2);
+    bool collided_vertical = circle_rect_collision(player->x, player->y, player_radius, x1, y1, x2, y2);
 
     // Collide with horizontal
     switch (orientation) {
@@ -363,7 +369,7 @@ bool player_circle_touches_slope(int obj, Player *player) {
             break;
     }
     
-    bool collided_horizontal = circle_rect_collision(player->x, player->y, player->width / 2, x1, y1, x2, y2);
+    bool collided_horizontal = circle_rect_collision(player->x, player->y, player_radius, x1, y1, x2, y2);
 
     return collided_vertical | collided_hipo | collided_horizontal;
 }

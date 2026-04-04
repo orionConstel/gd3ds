@@ -1046,7 +1046,7 @@ void collide_with_obj(Player *player, int obj) {
 
     if (UNLIKELY(hitbox->type == COLLISION_CIRCLE)) {
         if (intersect_rect_circle(
-            player->x, player->y, player->width, player->height, player->rotation, 
+            player->x, player->y, player->width, player->height, 0, 
             x, y, hitbox->width
         )) {
             handle_collision(player, obj, hitbox);

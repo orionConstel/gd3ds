@@ -322,7 +322,7 @@ void ball_gamemode(Player *player) {
     drag_particles[state.current_player].scale = (player->mini ? 0.6f : 1.0f);
 
     // Jump
-    if ((state.input.holdJump) && (player->on_ground || player->on_ceiling) && player->buffering_state == BUFFER_READY) {        
+    if ((state.input.holdJump) && (player->slope_data.slope_id >= 0 || player->on_ground || player->on_ceiling) && player->buffering_state == BUFFER_READY) {        
         float delta_y = player->vel_y;
 
         player->upside_down ^= 1;
@@ -980,10 +980,6 @@ void draw_player_hitbox(Player *player) {
     get_corners(player->x, player->y, internal.width, internal.height, 0, rect);
 
     draw_square(rect, C2D_Color32(0x00, 0x00, 0xff, 0xff));
-
-    // Circle hitbox
-    float calc_radius = (player->width / 2);
-    custom_circunference(calc_x_on_screen(player->x), calc_y_on_screen(player->y), calc_radius, C2D_Color32(0xff, 0x00, 0x00, 0xff), 2.f);
 
     // Unrotated hitbox
     get_corners(player->x, player->y, player->width, player->height, 0, rect);
