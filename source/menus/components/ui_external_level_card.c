@@ -12,7 +12,7 @@
 
 static void ui_external_level_card_update(UIElement* e, UIInput* touch) {
     float right_side = e->x + e->w / 2;
-    float button_pos = right_side - 10;
+    float button_pos = right_side - 15;
 
     float width = e->external_level_card.button_w;
     float height = e->external_level_card.button_h;
