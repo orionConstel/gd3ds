@@ -102,6 +102,7 @@ void run_camera() {
         cam_y = 0;
     }
     
+    if (cam_y > MAX_LEVEL_HEIGHT) {
         cam_y = MAX_LEVEL_HEIGHT;
     }
 
