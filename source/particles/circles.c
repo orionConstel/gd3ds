@@ -232,6 +232,13 @@ void update_use_effects(float delta, int screen) {
     }
 }
 
+void clear_use_effects(int screen) {
+    UseEffect *ptr = (screen == GFX_TOP) ? use_effects_top : use_effects_bot;
+    for (size_t i = 0; i < MAX_USE_EFFECTS; i++) {
+        ptr[i].active = false;
+    }
+}
+
 void draw_use_effects(int screen) {
     UseEffect *ptr = (screen == GFX_TOP) ? use_effects_top : use_effects_bot;
     for (size_t i = 0; i < MAX_USE_EFFECTS; i++) {
