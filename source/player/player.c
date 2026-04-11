@@ -455,7 +455,7 @@ void wave_gamemode(Player *player) {
     player->gravity = 0;
 
     player->vel_y = (input * 2 - 1) * player_speeds[state.speed] * (player->mini ? 2 : 1);
-    if (state.old_input.holdJump != state.input.holdJump || player->on_ground != state.old_player.on_ground || player->on_ceiling != state.old_player.on_ceiling || player->mini != state.old_player.mini || player->upside_down != state.old_player.upside_down) {
+    if (player->vel_y != state.old_player.vel_y || player->on_ground != state.old_player.on_ground || player->on_ceiling != state.old_player.on_ceiling || player->mini != state.old_player.mini || player->upside_down != state.old_player.upside_down) {
         MotionTrail_AddWavePoint(wave_trail);
     }
 }
