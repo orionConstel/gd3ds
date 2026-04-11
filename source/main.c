@@ -577,7 +577,7 @@ void game_loop() {
             
 
             update_use_effects(delta, GFX_TOP);
-            update_object_particles();
+            update_object_particles(delta);
             u64 end_part = svcGetSystemTick();
             u64 ticks_part = end_part - start_part;
             particle_calc_time = ticks_part / CPU_TICKS_PER_MSEC;

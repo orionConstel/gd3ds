@@ -722,17 +722,14 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                     player->ceiling_inv_time = CEILING_INVUL_TIME;
                     state.dual = true;
                     state.dual_portal_y = objects.y[obj];
-    
-                    if (player->gamemode == GAMEMODE_DART) {
-                        MotionTrail_Init(&wave_trail_p2, 3.f, 3, 10.0f, true, get_white_if_black(p1_color), C2D_SpriteSheetGetImage(trailSheet, 0));   
-                        wave_trail_p2.positionR = (Vec2){state.player2.x, state.player2.y};  
-                        wave_trail_p2.startingPositionInitialized = true;
-                        MotionTrail_AddWavePoint(&wave_trail_p2);
-                    }
-                    MotionTrail_Init(&trail_p2, 0.3f, 3, 10.0f, false, get_white_if_black(p1_color), C2D_SpriteSheetGetImage(trailSheet, 0));
-                    MotionTrail_AddWavePoint(&trail_p2);
                 }
                 setup_dual();
+                if (state.player2.gamemode == GAMEMODE_DART) {
+                    MotionTrail_Init(&wave_trail_p2, 3.f, 3, 10.0f, true, get_white_if_black(p1_color), C2D_SpriteSheetGetImage(trailSheet, 0));   
+                    wave_trail_p2.positionR = (Vec2){state.player2.x, state.player2.y};  
+                    wave_trail_p2.startingPositionInitialized = true;
+                    MotionTrail_AddWavePoint(&wave_trail_p2);
+                }
                 SET_ACTIVATED(obj, true);                
             }
             break;
@@ -745,19 +742,19 @@ void handle_special_hitbox(Player *player, int obj, const ObjectHitbox *hitbox) 
                         memcpy(&state.player, player, sizeof(Player));
                     }
                     switch (state.player.gamemode) {
-                    case GAMEMODE_PLAYER:
-                        state.ground_y = 0;
-                        state.ceiling_y = 999999;
-                        break;
-                    case GAMEMODE_SHIP:
-                    case GAMEMODE_BIRD:
-                        state.ceiling_y = state.ground_y + 300;
-                        set_intended_ceiling();
-                        break;
-                    case GAMEMODE_PLAYER_BALL:
-                        state.ceiling_y = state.ground_y + 240;
-                        set_intended_ceiling();
-                }
+                        case GAMEMODE_PLAYER:
+                            state.ground_y = 0;
+                            state.ceiling_y = 999999;
+                            break;
+                        case GAMEMODE_SHIP:
+                        case GAMEMODE_BIRD:
+                            state.ceiling_y = state.ground_y + 300;
+                            set_intended_ceiling();
+                            break;
+                        case GAMEMODE_PLAYER_BALL:
+                            state.ceiling_y = state.ground_y + 240;
+                            set_intended_ceiling();
+                    }
 
                     UseEffect *effect = add_use_effect(objects.x[obj], objects.y[obj], obj, &portal_use_effect, GFX_TOP);
                     if (effect) {

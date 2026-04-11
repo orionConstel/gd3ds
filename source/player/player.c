@@ -785,13 +785,6 @@ void draw_p1_trail(Player *player) {
 }
 
 void draw_player(Player *player) {
-    change_blending(true);
-    draw_p1_trail(player);
-    MotionTrail_Draw(trail);
-    MotionTrail_DrawWaveTrail(wave_trail);
-
-    change_blending(false);
-
     // Don't draw player if dead
     if (state.dead) return;
 
@@ -806,7 +799,6 @@ void draw_player(Player *player) {
         primary_color = secondary_color;
         secondary_color = tmp;
     }
-
 
     float scale = (player->mini) ? 0.6f : 1.f;
 
