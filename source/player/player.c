@@ -584,10 +584,6 @@ void run_player(Player *player) {
             player->lerp_rotation = iSlerp(player->lerp_rotation, player->rotation, 0.2f, STEPS_DT);
         }
     }
-    
-    player->vel_x = player_speeds[state.speed]; 
-    player->x += player->vel_x * STEPS_DT;
-    player->y += player_get_vel(player, player->vel_y) * STEPS_DT;
 
     player->left_ground = false;
 
@@ -669,6 +665,10 @@ void handle_player(Player *player) {
     player->potentialSlope_id = -1;
     
     player->timeElapsed += STEPS_DT;
+
+    player->vel_x = player_speeds[state.speed]; 
+    player->x += player->vel_x * STEPS_DT;
+    player->y += player_get_vel(player, player->vel_y) * STEPS_DT;
 
     player->frame++;
 
